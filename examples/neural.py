@@ -4,7 +4,8 @@ ner = NeuralNER()
 ner.add_rule("name", "my name is {person}")
 
 for ent in ner.extract_entities("the name is jarbas"):
-    assert ent.as_json() == {'confidence': 0.6327182657104353,
+    assert ent.as_json() == {'confidence': 0.5251495787186434,
+                             'data': {},
                              'end': 18,
                              'entity_type': 'person',
                              'rules': [{'name': 'name',
@@ -14,7 +15,8 @@ for ent in ner.extract_entities("the name is jarbas"):
                              'value': 'jarbas'}
 
 for ent in ner.extract_entities("name is kevin"):
-    assert ent.as_json() == {'confidence': 0.8290174158328332,
+    assert ent.as_json() == {'confidence': 0.8363423970007801,
+                             'data': {},
                              'end': 13,
                              'entity_type': 'person',
                              'rules': [{'name': 'name',

@@ -4,9 +4,10 @@ from simple_NER import Entity
 try:
     import spotlight
 except ImportError:
-    print("you need to install pyspottlight")
-    print("pip install pyspottlight")
+    print("you need to install pyspotlight")
+    print("pip install pyspotlight")
     raise
+
 
 class SpotlightNER(NERWrapper):
     def __init__(self, host='http://api.dbpedia-spotlight.org/en/annotate',
@@ -29,7 +30,8 @@ class SpotlightNER(NERWrapper):
                                      "uri": e["URI"],
                                      "support": e["support"],
                                      "offset": e["offset"],
-                                     "percentageOfSecondRank": e["percentageOfSecondRank"],
+                                     "percentageOfSecondRank": e[
+                                         "percentageOfSecondRank"],
                                      "similarityScore": e["similarityScore"],
                                      "types": e["types"].split(",")},
                                  confidence=e["similarityScore"])
@@ -38,4 +40,4 @@ class SpotlightNER(NERWrapper):
 if __name__ == "__main__":
     ner = SpotlightNER()
     for r in ner.extract_entities("elon musk works in spaceX"):
-        print(r.value, r.name)
+        print(r.value, r.entity_type)

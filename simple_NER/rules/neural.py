@@ -41,7 +41,7 @@ if __name__ == "__main__":
     n.add_rule("name", "my name is {Person}")
     for ent in n.extract_entities("the name is jarbas"):
         print("TEXT:", ent.source_text)
-        print("ENTITY TYPE: ", ent.name, "ENTITY_VALUE: ", ent.value)
+        print("ENTITY TYPE: ", ent.entity_type, "ENTITY_VALUE: ", ent.value)
         print("RULES:", ent.rules)
     for ent in n.extract_entities("my name is chatterbox", as_json=True):
         pprint(ent)

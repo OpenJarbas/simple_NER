@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='simple_NER',
-    version='0.1.2',
+    version='0.1.3',
     packages=['simple_NER', 'simple_NER.rules', 'simple_NER.annotators',
               'simple_NER.annotators.utils'],
     url='https://github.com/JarbasAl/simple_NER',

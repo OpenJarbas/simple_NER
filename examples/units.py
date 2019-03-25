@@ -2,6 +2,11 @@ from simple_NER.annotators.units import UnitsNER
 
 ner = UnitsNER()
 for r in ner.extract_entities("The LHC smashes proton beams at 12.8–13.0 TeV"):
+    assert r.data_value == 12.9
+    print(
+        r.unit.entity_type
+    )
+    print(r.value)
     assert r.as_json() == \
            {'confidence': 1,
             'data': {'lang': 'en_US',
@@ -13,15 +18,17 @@ for r in ner.extract_entities("The LHC smashes proton beams at 12.8–13.0 TeV")
                      'unit': {'currency_code': None,
                               'dimensions': [
                                   {'base': 'teraelectronvolt', 'power': 1}],
-                              'entity': {'dimensions': [
-                                  {'base': 'force', 'power': 1},
-                                  {'base': 'length', 'power': 1}],
+                              'entity': {
+                                  'dimensions': [{'base': 'force', 'power': 1},
+                                                 {'base': 'length',
+                                                  'power': 1}],
                                   'name': 'energy',
                                   'uri': 'Energy'},
                               'lang': 'en_US',
                               'name': 'teraelectronvolt',
                               'original_dimensions': [
-                                  {'base': 'teraelectronvolt', 'power': 1,
+                                  {'base': 'teraelectronvolt',
+                                   'power': 1,
                                    'surface': 'TeV'}],
                               'surfaces': ['teraelectron volt',
                                            'teraelectronvolt',

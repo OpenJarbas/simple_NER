@@ -8,7 +8,9 @@ regex = r'((0?[13578]|10|12)(-|\/)((0[0-9])|([12])([0-9]?)|(3[01]?))(-|\/)((\d{4
 ner.add_rule("date", regex)
 
 for e in ner.extract_entities(text):
+
     assert e.as_json() == {'confidence': 1,
+                           'data': {},
                            'end': 29,
                            'entity_type': 'date',
                            'rules': [{'name': 'date',

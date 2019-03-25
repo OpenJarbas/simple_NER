@@ -19,7 +19,8 @@ class RegexNER(RuleNER):
                     regex = self._create_regex(rul)
                     match = regex.findall(query)
                     for ent in match:
-                        ent = ent[0]
+                        if not isinstance(ent, str):
+                            ent = ent[0]
                         yield Entity(ent, rule.name, source_text=query,
                                      rules=self._rules[r])
 
@@ -47,7 +48,7 @@ if __name__ == "__main__":
     n = RegexNER()
     text = "hello there"
     word = "hello"
-    rules = r'(\W*'+word+'\W*\!?\W*)'
+    rules = r'(\W*hello\W*\!?\W*)'
     n.add_rule("greeting", rules)
     for e in n.extract_entities(text):
         pprint(e.as_json())

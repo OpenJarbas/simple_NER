@@ -26,6 +26,7 @@ from source
 
     git clone https://github.com/JarbasAl/simple_NER
     cd simple_NER
+    pip install -r requirements.txt
     pip install .
     
 ## Usage

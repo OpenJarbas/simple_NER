@@ -1,1 +1,5 @@
 padaos
+quantulum3
+pyspotlight
+fann2==1.0.7
+padatious==0.4.5

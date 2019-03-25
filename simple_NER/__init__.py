@@ -1,4 +1,5 @@
 import re
+import types
 
 
 class Entity(object):
@@ -18,6 +19,18 @@ class Entity(object):
         self._confidence = confidence
         self.data = data or {}
 
+        # set properties so they can be accessed with dot notation
+        for k in self.data:
+            if isinstance(self.data[k], dict):
+                clazz = types.new_class(k, (Entity,))
+                for k2 in self.data[k]:
+                    setattr(clazz, k2, self.data[k][k2])
+                setattr(self, k, clazz(k))
+            elif k == "value":
+                setattr(self, "data_value", self.data[k])
+            else:
+                setattr(self, k, self.data[k])
+
     @property
     def confidence(self):
         return self._confidence
@@ -27,7 +40,7 @@ class Entity(object):
         return self._rules
 
     @property
-    def name(self):
+    def entity_type(self):
         return self._name
 
     @property
@@ -47,13 +60,13 @@ class Entity(object):
         return self.start_index + len(self.value)
 
     def as_json(self):
-        return {"entity_type": self.name, "start": self.start_index,
+        return {"entity_type": self.entity_type, "start": self.start_index,
                 "end": self.end_index, "value": self.value,
                 "source_text": self.source_text, "confidence": self.confidence,
                 "rules": [r.as_json() for r in self.rules], "data": self.data}
 
     def __repr__(self):
-        return self.name + ":" + self.value
+        return self.entity_type + ":" + self.value
 
 
 class SimpleNER(object):
@@ -61,6 +74,7 @@ class SimpleNER(object):
         self._examples = {}
 
     def is_match(self, text, entity):
+        entities = []
         if isinstance(entity, str):
             entities = self._examples[entity]
         if isinstance(entity, Entity):
@@ -88,10 +102,10 @@ class SimpleNER(object):
 
                 if re.findall(r'\b' + ent.value.lower() + r"\b", text.lower()):
                     if as_json:
-                        yield Entity(value=ent.value, entity_type=ent.name,
+                        yield Entity(value=ent.value, entity_type=ent.entity_type,
                                      source_text=text).as_json()
                     else:
-                        yield Entity(value=ent.value, entity_type=ent.name,
+                        yield Entity(value=ent.value, entity_type=ent.entity_type,
                                      source_text=text)
 
 
@@ -103,6 +117,6 @@ if __name__ == "__main__":
     pprint(n.examples)
     for ent in n.entity_lookup("my name is Jarbas"):
         print("TEXT:", ent.source_text)
-        print("ENTITY TYPE: ", ent.name, "ENTITY_VALUE: ", ent.value)
+        print("ENTITY TYPE: ", ent.entity_type, "ENTITY_VALUE: ", ent.value)
     for ent in n.entity_lookup("where is Kevin", as_json=True):
         pprint(ent)
