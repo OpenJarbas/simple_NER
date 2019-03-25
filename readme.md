@@ -9,6 +9,7 @@ simple rule based named entity recognition
     + [Rule Based NER](#rule-based-ner)
     + [Regex NER](#regex-ner)
     + [Neural NER](#neural-ner)
+  * [Similar Projects](#similar-projects)
     
     
 ## Install
@@ -136,6 +137,17 @@ for ent in ner.extract_entities("name is kevin"):
                              'start': 8,
                              'value': 'kevin'}
 ```
+
+## Similar Projects
+
+This is a rule based NER library, if you are looking for a out of the box solution check these projects
+
+- [Polyglot](https://github.com/aboSamoor/polyglot) - Multilingual text (NLP) processing toolkit
+- [Spacy](https://github.com/explosion/spaCy) and the [lookup extension](https://github.com/mpuig/spacy-lookup) - Industrial-strength Natural Language Processing
+- [NeuroNER](https://github.com/Franck-Dernoncourt/NeuroNER) - Named-entity recognition using neural networks. Easy-to-use and state-of-the-art results.
+- [Chatbot NER](https://github.com/hellohaptik/chatbot_ner) - Named Entity Recognition for chatbots
+- [EpiTator](https://github.com/ecohealthalliance/EpiTator) - Annotators for extracting epidemiological information from text.
+
 
 [![Donate with Bitcoin](https://en.cryptobadges.io/badge/micro/1QJNhKM8tVv62XSUrST2vnaMXh5ADSyYP8)](https://en.cryptobadges.io/donate/1QJNhKM8tVv62XSUrST2vnaMXh5ADSyYP8)
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://paypal.me/jarbasai)
