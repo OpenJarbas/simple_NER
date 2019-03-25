@@ -10,6 +10,7 @@ simple rule based named entity recognition
     + [Regex NER](#regex-ner)
     + [Neural NER](#neural-ner)
     + [Custom Annotators](#custom-annotators)
+      - [Email](#email)
       - [Date Time](#date-time)
       - [Spotlight](#spotlight)
       - [Units](#units)
@@ -177,9 +178,35 @@ for ent in ner.extract_entities("hitler only had one ball"):
 
 ```
 
+#### Email
+
+Emails can be annotated using regex rules
+
+```python
+from simple_NER.annotators.email import EmailNER
+
+ner = EmailNER()
+text = "my email is jarbasai@mailfence.com"
+for ent in ner.extract_entities(text):
+    assert ent.as_json() == {'confidence': 1,
+                             'data': {},
+                             'end': 34,
+                             'entity_type': 'email',
+                             'rules': [{'name': 'email',
+                                        'rules': [
+                                            '(?:[a-z0-9!#$%&\\\'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&\\\'*+/=?^_`{|}~-]+)*|"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])']}],
+                             'source_text': 'my email is jarbasai@mailfence.com',
+                             'start': 12,
+                             'value': 'jarbasai@mailfence.com'}
+```
+
 #### Date Time
 
-relative date times can be annotated
+date times can be annotated using [MycroftAI parsers](https://github.com/MycroftAI/mycroft-core/blob/dev/mycroft/util/lang/parse_en.py#L667)
+
+annotated entities will have timestamp and iso_format properties
+
+a anchor date can be provided for relative times
 
 ```python
 from simple_NER.annotators.date import DateTimeNER
