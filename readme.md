@@ -146,6 +146,7 @@ This is a rule based NER library, if you are looking for a out of the box soluti
 - [Spacy](https://github.com/explosion/spaCy) and the [lookup extension](https://github.com/mpuig/spacy-lookup) - Industrial-strength Natural Language Processing
 - [NeuroNER](https://github.com/Franck-Dernoncourt/NeuroNER) - Named-entity recognition using neural networks. Easy-to-use and state-of-the-art results.
 - [Chatbot NER](https://github.com/hellohaptik/chatbot_ner) - Named Entity Recognition for chatbots
+- [Quantulum3](https://github.com/nielstron/quantulum3) - information extraction of quantities, measurements and their units from unstructured text
 - [EpiTator](https://github.com/ecohealthalliance/EpiTator) - Annotators for extracting epidemiological information from text.
 
 
