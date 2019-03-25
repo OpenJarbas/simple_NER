@@ -12,8 +12,12 @@ simple rule based named entity recognition
     + [Custom Annotators](#custom-annotators)
       - [Email](#email)
       - [Date Time](#date-time)
-      - [Spotlight](#spotlight)
       - [Units](#units)
+    + [Remote annotators](#remote-annotators)
+      - [Spotlight](#spotlight)
+      - [Spacy Demo](#spacy-demo)
+      - [Polyglot Demo](#polyglot-demo)
+      - [AllenAi Nlp](#allenai-nlp)
   * [Similar Projects](#similar-projects)
   
   
@@ -228,31 +232,6 @@ for r in ner.extract_entities("my birthday is on december 5th"):
 
 ```
 
-#### Spotlight
-
-Using [pyspotlight](https://github.com/ubergrape/pyspotlight) we can annotate entities from dbpedia
-
-extra install step
-
-    pip install pyspotlight
-    
-    
-```python
-from simple_NER.annotators.dbpedia import SpotlightNER
-
-ner = SpotlightNER()
-for r in ner.extract_entities("elon musk works in spaceX"):
-    print(r.value, r.entity_type, r.uri)
-    score = r.similarityScore
-    """
-    elon musk Person http://dbpedia.org/resource/Elon_Musk
-    elon musk Agent http://dbpedia.org/resource/Elon_Musk
-    spaceX Organisation http://dbpedia.org/resource/SpaceX
-    spaceX Company http://dbpedia.org/resource/SpaceX
-    spaceX Agent http://dbpedia.org/resource/SpaceX
-    """
-```
-
 #### Units
 
 Using [Quantulum3](https://github.com/nielstron/quantulum3) for information extraction of quantities, measurements and their units from unstructured text
@@ -306,6 +285,105 @@ for r in ner.extract_entities("The LHC smashes proton beams at 12.8–13.0 TeV")
             'start': 32,
             'value': '12.8–13.0 TeV'}
 
+
+```
+
+### Remote annotators
+
+Some web based annotators are also provided
+
+#### Spotlight
+
+Using [pyspotlight](https://github.com/ubergrape/pyspotlight) we can annotate entities from dbpedia
+
+extra install step
+
+    pip install pyspotlight
+    
+    
+```python
+from simple_NER.annotators.remote.dbpedia import SpotlightNER
+
+ner = SpotlightNER()
+for r in ner.extract_entities("elon musk works in spaceX"):
+    print(r.value, r.entity_type, r.uri)
+    score = r.similarityScore
+    """
+    elon musk Person http://dbpedia.org/resource/Elon_Musk
+    elon musk Agent http://dbpedia.org/resource/Elon_Musk
+    spaceX Organisation http://dbpedia.org/resource/SpaceX
+    spaceX Company http://dbpedia.org/resource/SpaceX
+    spaceX Agent http://dbpedia.org/resource/SpaceX
+    """
+```
+
+#### Spacy Demo
+
+webscrapping the [spacy NER demo](https://explosion.ai/demos/displacy-ent)
+
+```python
+from simple_NER.annotators.remote.spacy import SpacyNER
+
+ner = SpacyNER()
+for r in ner.extract_entities("elon musk works in spaceX"):
+    assert r.as_json() == {'confidence': 1,
+                           'data': {},
+                           'end': 25,
+                           'entity_type': 'ORG',
+                           'rules': [],
+                           'source_text': 'elon musk works in spaceX',
+                           'start': 19,
+                           'value': 'spaceX'}
+```
+
+#### Polyglot Demo
+
+webscrapping the [polyglot NER demo](https://explosion.ai/demos/displacy-ent)
+
+```python
+from simple_NER.annotators.remote.polyglot import PolyglotNER
+
+ner = PolyglotNER()
+text = """The Israeli Prime Minister Benjamin Netanyahu has warned that Iran poses a "threat to the entire world"."""
+ents = [r for r in ner.extract_entities(text)]
+assert ents[2].as_json() == {'confidence': 1,
+                             'data': {},
+                             'end': 66,
+                             'entity_type': 'location',
+                             'rules': [],
+                             'source_text': 'The Israeli Prime Minister Benjamin Netanyahu has warned that '
+                                            'Iran poses a "threat to the entire world".',
+                             'start': 62,
+                             'value': 'Iran'}
+```
+
+#### AllenAi Nlp
+
+using the [AllenNLP demo](https://github.com/allenai/allennlp-demo)
+
+```python
+from simple_NER.annotators.remote.allenai import AllenNlpNER
+
+host = "http://demo.allennlp.org/predict/"
+
+ner = AllenNlpNER(host)
+ents = [r for r in ner.extract_entities("Lisbon is the capital of Portugal")]
+assert ents[0].as_json() == {'confidence': 1,
+                             'data': {},
+                             'end': 6,
+                             'entity_type': 'U-LOC',
+                             'rules': [],
+                             'source_text': 'Lisbon is the capital of Portugal',
+                             'start': 0,
+                             'value': 'Lisbon'}
+assert ents[1].as_json() == {'confidence': 1,
+                             'data': {},
+                             'end': 33,
+                             'entity_type': 'U-LOC',
+                             'rules': [],
+                             'source_text': 'Lisbon is the capital of Portugal',
+                             'start': 25,
+                             'value': 'Portugal'}
 
 ```
 

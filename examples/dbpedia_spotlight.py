@@ -1,4 +1,4 @@
-from simple_NER.annotators.dbpedia import SpotlightNER
+from simple_NER.annotators.remote.dbpedia import SpotlightNER
 
 ner = SpotlightNER()
 for r in ner.extract_entities("elon musk works in spaceX"):
