@@ -9,9 +9,13 @@ simple rule based named entity recognition
     + [Rule Based NER](#rule-based-ner)
     + [Regex NER](#regex-ner)
     + [Neural NER](#neural-ner)
+    + [Custom Annotators](#custom-annotators)
+      - [Date Time](#date-time)
+      - [Spotlight](#spotlight)
+      - [Units](#units)
   * [Similar Projects](#similar-projects)
-    
-    
+  
+  
 ## Install
 
 Available on pip
@@ -138,6 +142,127 @@ for ent in ner.extract_entities("name is kevin"):
                              'value': 'kevin'}
 ```
 
+### Custom Annotators
+
+you can create your own annotators
+
+```python
+from simple_NER.annotators import NERWrapper
+from simple_NER import Entity
+
+
+def extract_hitler(text):
+    if "hitler" in text.lower():
+        yield Entity("hitler", "bad_guy", source_text=text, data={
+            "known_for": ["killing jews", "world war 2"]})
+
+
+ner = NERWrapper()
+ner.add_detector(extract_hitler)
+
+for ent in ner.extract_entities("hitler only had one ball"):
+    assert ent.as_json() == {'confidence': 1,
+                             'data': {
+                                 'known_for': ['killing jews', 'world war 2']},
+                             'end': 6,
+                             'entity_type': 'bad_guy',
+                             'rules': [],
+                             'source_text': 'hitler only had one ball',
+                             'start': 0,
+                             'value': 'hitler'}
+```
+
+#### Date Time
+
+relative date times can be annotated
+
+```python
+from simple_NER.annotators.date import DateTimeNER
+
+ner = DateTimeNER()
+for r in ner.extract_entities("meeting tomorrow morning"):
+    assert r.value == 'tomorrow morning'
+
+for r in ner.extract_entities("my birthday is on december 5th"):
+    assert r.value == 'on december 5th'
+    assert r.name == "date"
+```
+
+#### Spotlight
+
+Using [pyspotlight](https://github.com/ubergrape/pyspotlight) we can annotate entities from dbpedia
+
+extra install step
+
+    pip install pyspotlight
+    
+    
+```python
+from simple_NER.annotators.dbpedia import SpotlightNER
+
+ner = SpotlightNER()
+for r in ner.extract_entities("elon musk works in spaceX"):
+    print(r.value, r.name)
+
+    """
+    elon musk Person
+    elon musk Agent
+    spaceX Organisation
+    spaceX Company
+    spaceX Agent
+    """
+```
+
+#### Units
+
+Using [Quantulum3](https://github.com/nielstron/quantulum3) for information extraction of quantities, measurements and their units from unstructured text
+
+extra install step
+
+    pip install quantulum3
+    
+    
+```python
+from simple_NER.annotators.units import UnitsNER
+
+ner = UnitsNER()
+for r in ner.extract_entities("The LHC smashes proton beams at 12.8–13.0 TeV"):
+    assert r.as_json() == \
+           {'confidence': 1,
+            'data': {'lang': 'en_US',
+                     'span': (32, 45),
+                     'spoken': 'The LHC smashes proton beams at twelve point nine '
+                               'teraelectron volts',
+                     'surface': '12.8–13.0 TeV',
+                     'uncertainty': 0.09999999999999964,
+                     'unit': {'currency_code': None,
+                              'dimensions': [
+                                  {'base': 'teraelectronvolt', 'power': 1}],
+                              'entity': {'dimensions': [
+                                  {'base': 'force', 'power': 1},
+                                  {'base': 'length', 'power': 1}],
+                                  'name': 'energy',
+                                  'uri': 'Energy'},
+                              'lang': 'en_US',
+                              'name': 'teraelectronvolt',
+                              'original_dimensions': [
+                                  {'base': 'teraelectronvolt', 'power': 1,
+                                   'surface': 'TeV'}],
+                              'surfaces': ['teraelectron volt', 
+                                           'teraelectronvolt',
+                                           'teraelectron-volt'],
+                              'symbols': ['TeV'],
+                              'uri': 'Electronvolt'},
+                     'value': 12.9},
+            'end': 45,
+            'entity_type': 'Energy:Electronvolt',
+            'rules': [],
+            'source_text': 'The LHC smashes proton beams at 12.8–13.0 TeV',
+            'start': 32,
+            'value': '12.8–13.0 TeV'}
+
+```
+
 ## Similar Projects
 
 This is a rule based NER library, if you are looking for a out of the box solution check these projects
@@ -146,7 +271,6 @@ This is a rule based NER library, if you are looking for a out of the box soluti
 - [Spacy](https://github.com/explosion/spaCy) and the [lookup extension](https://github.com/mpuig/spacy-lookup) - Industrial-strength Natural Language Processing
 - [NeuroNER](https://github.com/Franck-Dernoncourt/NeuroNER) - Named-entity recognition using neural networks. Easy-to-use and state-of-the-art results.
 - [Chatbot NER](https://github.com/hellohaptik/chatbot_ner) - Named Entity Recognition for chatbots
-- [Quantulum3](https://github.com/nielstron/quantulum3) - information extraction of quantities, measurements and their units from unstructured text
 - [EpiTator](https://github.com/ecohealthalliance/EpiTator) - Annotators for extracting epidemiological information from text.
 
 

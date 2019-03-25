@@ -5,7 +5,7 @@ class Entity(object):
     _name = "entity"
 
     def __init__(self, value, entity_type=None, source_text="", rules=None,
-                 confidence=1):
+                 confidence=1, data=None):
         if entity_type:
             self._name = entity_type
         self._index = source_text.lower().find(value.lower())
@@ -16,6 +16,7 @@ class Entity(object):
             rules = [rules]
         self._rules = rules or []
         self._confidence = confidence
+        self.data = data or {}
 
     @property
     def confidence(self):
@@ -49,7 +50,7 @@ class Entity(object):
         return {"entity_type": self.name, "start": self.start_index,
                 "end": self.end_index, "value": self.value,
                 "source_text": self.source_text, "confidence": self.confidence,
-                "rules": [r.as_json() for r in self.rules]}
+                "rules": [r.as_json() for r in self.rules], "data": self.data}
 
     def __repr__(self):
         return self.name + ":" + self.value
