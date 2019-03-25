@@ -338,7 +338,7 @@ for r in ner.extract_entities("elon musk works in spaceX"):
 
 #### Polyglot Demo
 
-webscrapping the [polyglot NER demo](https://explosion.ai/demos/displacy-ent)
+webscrapping the [polyglot NER demo](https://sites.google.com/site/rmyeid/projects/polylgot-ner#h.p_ID_63)
 
 ```python
 from simple_NER.annotators.remote.polyglot import PolyglotNER
