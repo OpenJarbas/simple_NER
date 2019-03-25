@@ -162,6 +162,9 @@ ner = NERWrapper()
 ner.add_detector(extract_hitler)
 
 for ent in ner.extract_entities("hitler only had one ball"):
+    assert ent.known_for == ['killing jews', 'world war 2']
+    assert ent.value == "hitler"
+    assert ent.entity_type == "bad_guy"
     assert ent.as_json() == {'confidence': 1,
                              'data': {
                                  'known_for': ['killing jews', 'world war 2']},
@@ -171,6 +174,7 @@ for ent in ner.extract_entities("hitler only had one ball"):
                              'source_text': 'hitler only had one ball',
                              'start': 0,
                              'value': 'hitler'}
+
 ```
 
 #### Date Time
@@ -203,14 +207,14 @@ from simple_NER.annotators.dbpedia import SpotlightNER
 
 ner = SpotlightNER()
 for r in ner.extract_entities("elon musk works in spaceX"):
-    print(r.value, r.name)
-
+    print(r.value, r.entity_type, r.uri)
+    score = r.similarityScore
     """
-    elon musk Person
-    elon musk Agent
-    spaceX Organisation
-    spaceX Company
-    spaceX Agent
+    elon musk Person http://dbpedia.org/resource/Elon_Musk
+    elon musk Agent http://dbpedia.org/resource/Elon_Musk
+    spaceX Organisation http://dbpedia.org/resource/SpaceX
+    spaceX Company http://dbpedia.org/resource/SpaceX
+    spaceX Agent http://dbpedia.org/resource/SpaceX
     """
 ```
 
@@ -228,6 +232,9 @@ from simple_NER.annotators.units import UnitsNER
 
 ner = UnitsNER()
 for r in ner.extract_entities("The LHC smashes proton beams at 12.8–13.0 TeV"):
+    assert r.data_value == 12.9
+    assert r.unit.name == "teraelectronvolt"
+    assert r.value == "12.8–13.0 TeV"
     assert r.as_json() == \
            {'confidence': 1,
             'data': {'lang': 'en_US',
@@ -239,17 +246,19 @@ for r in ner.extract_entities("The LHC smashes proton beams at 12.8–13.0 TeV")
                      'unit': {'currency_code': None,
                               'dimensions': [
                                   {'base': 'teraelectronvolt', 'power': 1}],
-                              'entity': {'dimensions': [
-                                  {'base': 'force', 'power': 1},
-                                  {'base': 'length', 'power': 1}],
+                              'entity': {
+                                  'dimensions': [{'base': 'force', 'power': 1},
+                                                 {'base': 'length',
+                                                  'power': 1}],
                                   'name': 'energy',
                                   'uri': 'Energy'},
                               'lang': 'en_US',
                               'name': 'teraelectronvolt',
                               'original_dimensions': [
-                                  {'base': 'teraelectronvolt', 'power': 1,
+                                  {'base': 'teraelectronvolt',
+                                   'power': 1,
                                    'surface': 'TeV'}],
-                              'surfaces': ['teraelectron volt', 
+                              'surfaces': ['teraelectron volt',
                                            'teraelectronvolt',
                                            'teraelectron-volt'],
                               'symbols': ['TeV'],
@@ -261,6 +270,7 @@ for r in ner.extract_entities("The LHC smashes proton beams at 12.8–13.0 TeV")
             'source_text': 'The LHC smashes proton beams at 12.8–13.0 TeV',
             'start': 32,
             'value': '12.8–13.0 TeV'}
+
 
 ```
 
