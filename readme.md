@@ -47,18 +47,17 @@ from simple_NER import SimpleNER
 ner = SimpleNER()
 ner.add_entity_examples("person", ["bob", "jon", "amy", "kevin"])
 
-for ent in ner.entity_lookup("where is Kevin", as_json=True):
-    assert ent == {'confidence': 1,
-                 'end': 14,
-                 'entity_type': 'person',
-                 'rules': [],
-                 'source_text': 'where is Kevin',
-                 'start': 9,
-                 'value': 'kevin'}
-                 
 assert ner.is_match("jon is ugly", "person")
 assert not ner.is_match("i like pizza", "person")
 
+for ent in ner.entity_lookup("where is Kevin", as_json=True):
+    assert ent == {'confidence': 1,
+                   'data': {},
+                   'entity_type': 'person',
+                   'rules': [],
+                   'source_text': 'where is Kevin',
+                   'spans': [(9, 14)],
+                   'value': 'kevin'}
 ```
 
 ### Rule Based NER
@@ -73,12 +72,12 @@ ner.add_rule("name", "my name is {person}")
 
 for ent in ner.extract_entities("my name is jarbas"):
     assert ent.as_json() == {'confidence': 1,
-                             'end': 17,
+                             'data': {},
                              'entity_type': 'person',
                              'rules': [{'name': 'name',
                                         'rules': ['my name is {person}']}],
                              'source_text': 'my name is jarbas',
-                             'start': 11,
+                             'spans': [(11, 17)],
                              'value': 'jarbas'}
 ```
 
@@ -98,15 +97,14 @@ ner.add_rule("date", regex)
 
 for e in ner.extract_entities(text):
     assert e.as_json() == {'confidence': 1,
-                           'end': 29,
+                           'data': {},
                            'entity_type': 'date',
                            'rules': [{'name': 'date',
                                       'rules': [
                                           '((0?[13578]|10|12)(-|\\/)((0[0-9])|([12])([0-9]?)|(3[01]?))(-|\\/)((\\d{4})|(\\d{2}))|(0?[2469]|11)(-|\\/)((0[0-9])|([12])([0-9]?)|(3[0]?))(-|\\/)((\\d{4}|\\d{2})))']}],
                            'source_text': 'i went to japan in 12/10/1996',
-                           'start': 19,
+                           'spans': [(19, 29)],
                            'value': '12/10/1996'}
-
 ```
 
 
@@ -128,23 +126,23 @@ ner = NeuralNER()
 ner.add_rule("name", "my name is {person}")
 
 for ent in ner.extract_entities("the name is jarbas"):
-    assert ent.as_json() == {'confidence': 0.6327182657104353,
-                             'end': 18,
+    assert ent.as_json() == {'confidence': 0.5251495787186434,
+                             'data': {},
                              'entity_type': 'person',
                              'rules': [{'name': 'name',
                                         'rules': ['my name is {person}']}],
                              'source_text': 'the name is jarbas',
-                             'start': 12,
+                             'spans': [(12, 18)],
                              'value': 'jarbas'}
-                             
+
 for ent in ner.extract_entities("name is kevin"):
-    assert ent.as_json() == {'confidence': 0.8290174158328332,
-                             'end': 13,
+    assert ent.as_json() == {'confidence': 0.8363423970007801,
+                             'data': {},
                              'entity_type': 'person',
                              'rules': [{'name': 'name',
                                         'rules': ['my name is {person}']}],
                              'source_text': 'name is kevin',
-                             'start': 8,
+                             'spans': [(8, 13)],
                              'value': 'kevin'}
 ```
 
@@ -173,13 +171,11 @@ for ent in ner.extract_entities("hitler only had one ball"):
     assert ent.as_json() == {'confidence': 1,
                              'data': {
                                  'known_for': ['killing jews', 'world war 2']},
-                             'end': 6,
                              'entity_type': 'bad_guy',
                              'rules': [],
                              'source_text': 'hitler only had one ball',
-                             'start': 0,
+                             'spans': [(0, 6)],
                              'value': 'hitler'}
-
 ```
 
 #### Email
@@ -194,13 +190,12 @@ text = "my email is jarbasai@mailfence.com"
 for ent in ner.extract_entities(text):
     assert ent.as_json() == {'confidence': 1,
                              'data': {},
-                             'end': 34,
                              'entity_type': 'email',
                              'rules': [{'name': 'email',
                                         'rules': [
                                             '(?:[a-z0-9!#$%&\\\'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&\\\'*+/=?^_`{|}~-]+)*|"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])']}],
                              'source_text': 'my email is jarbasai@mailfence.com',
-                             'start': 12,
+                             'spans': [(12, 34)],
                              'value': 'jarbasai@mailfence.com'}
 ```
 
@@ -252,40 +247,33 @@ for r in ner.extract_entities("The LHC smashes proton beams at 12.8–13.0 TeV")
     assert r.as_json() == \
            {'confidence': 1,
             'data': {'lang': 'en_US',
-                     'span': (32, 45),
-                     'spoken': 'The LHC smashes proton beams at twelve point nine '
-                               'teraelectron volts',
-                     'surface': '12.8–13.0 TeV',
+                     'spoken': 'twelve point nine teraelectron volts',
                      'uncertainty': 0.09999999999999964,
-                     'unit': {'currency_code': None,
-                              'dimensions': [
-                                  {'base': 'teraelectronvolt', 'power': 1}],
-                              'entity': {
-                                  'dimensions': [{'base': 'force', 'power': 1},
-                                                 {'base': 'length',
-                                                  'power': 1}],
-                                  'name': 'energy',
-                                  'uri': 'Energy'},
-                              'lang': 'en_US',
-                              'name': 'teraelectronvolt',
-                              'original_dimensions': [
-                                  {'base': 'teraelectronvolt',
-                                   'power': 1,
-                                   'surface': 'TeV'}],
-                              'surfaces': ['teraelectron volt',
-                                           'teraelectronvolt',
-                                           'teraelectron-volt'],
-                              'symbols': ['TeV'],
-                              'uri': 'Electronvolt'},
+                     'unit': {'dimensions': [
+                         {'base': 'teraelectronvolt', 'power': 1}],
+                         'entity': {
+                             'dimensions': [{'base': 'force', 'power': 1},
+                                            {'base': 'length',
+                                             'power': 1}],
+                             'name': 'energy',
+                             'uri': 'Energy'},
+                         'lang': 'en_US',
+                         'name': 'teraelectronvolt',
+                         'original_dimensions': [
+                             {'base': 'teraelectronvolt',
+                              'power': 1,
+                              'surface': 'TeV'}],
+                         'surfaces': ['teraelectron volt',
+                                      'teraelectronvolt',
+                                      'teraelectron-volt'],
+                         'symbols': ['TeV'],
+                         'uri': 'Electronvolt'},
                      'value': 12.9},
-            'end': 45,
             'entity_type': 'Energy:Electronvolt',
             'rules': [],
             'source_text': 'The LHC smashes proton beams at 12.8–13.0 TeV',
-            'start': 32,
+            'spans': [(32, 45)],
             'value': '12.8–13.0 TeV'}
-
-
 ```
 
 ### Remote annotators
@@ -328,11 +316,10 @@ ner = SpacyNER()
 for r in ner.extract_entities("elon musk works in spaceX"):
     assert r.as_json() == {'confidence': 1,
                            'data': {},
-                           'end': 25,
                            'entity_type': 'ORG',
                            'rules': [],
                            'source_text': 'elon musk works in spaceX',
-                           'start': 19,
+                           'spans': [(19, 25)],
                            'value': 'spaceX'}
 ```
 
@@ -346,14 +333,21 @@ from simple_NER.annotators.remote.polyglot import PolyglotNER
 ner = PolyglotNER()
 text = """The Israeli Prime Minister Benjamin Netanyahu has warned that Iran poses a "threat to the entire world"."""
 ents = [r for r in ner.extract_entities(text)]
+assert ents[0].as_json() == {'confidence': 1,
+                             'data': {},
+                             'entity_type': 'person',
+                             'rules': [],
+                             'source_text': 'The Israeli Prime Minister Benjamin Netanyahu has warned that '
+                                            'Iran poses a "threat to the entire world".',
+                             'spans': [(27, 35)],
+                             'value': 'Benjamin'}
 assert ents[2].as_json() == {'confidence': 1,
                              'data': {},
-                             'end': 66,
                              'entity_type': 'location',
                              'rules': [],
                              'source_text': 'The Israeli Prime Minister Benjamin Netanyahu has warned that '
                                             'Iran poses a "threat to the entire world".',
-                             'start': 62,
+                             'spans': [(62, 66)],
                              'value': 'Iran'}
 ```
 
@@ -367,24 +361,22 @@ from simple_NER.annotators.remote.allenai import AllenNlpNER
 host = "http://demo.allennlp.org/predict/"
 
 ner = AllenNlpNER(host)
-ents = [r for r in ner.extract_entities("Lisbon is the capital of Portugal")]
+ents = [r for r in
+        ner.extract_entities("Lisbon is the capital of Portugal")]
 assert ents[0].as_json() == {'confidence': 1,
                              'data': {},
-                             'end': 6,
                              'entity_type': 'U-LOC',
                              'rules': [],
                              'source_text': 'Lisbon is the capital of Portugal',
-                             'start': 0,
+                             'spans': [(0, 6)],
                              'value': 'Lisbon'}
 assert ents[1].as_json() == {'confidence': 1,
                              'data': {},
-                             'end': 33,
                              'entity_type': 'U-LOC',
                              'rules': [],
                              'source_text': 'Lisbon is the capital of Portugal',
-                             'start': 25,
+                             'spans': [(25, 33)],
                              'value': 'Portugal'}
-
 ```
 
 ## Similar Projects

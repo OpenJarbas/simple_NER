@@ -31,17 +31,15 @@ if __name__ == "__main__":
             ner.extract_entities("Lisbon is the capital of Portugal")]
     assert ents[0].as_json() == {'confidence': 1,
                                  'data': {},
-                                 'end': 6,
                                  'entity_type': 'U-LOC',
                                  'rules': [],
                                  'source_text': 'Lisbon is the capital of Portugal',
-                                 'start': 0,
+                                 'spans': [(0, 6)],
                                  'value': 'Lisbon'}
     assert ents[1].as_json() == {'confidence': 1,
                                  'data': {},
-                                 'end': 33,
                                  'entity_type': 'U-LOC',
                                  'rules': [],
                                  'source_text': 'Lisbon is the capital of Portugal',
-                                 'start': 25,
+                                 'spans': [(25, 33)],
                                  'value': 'Portugal'}

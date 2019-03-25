@@ -6,10 +6,9 @@ ner.add_rule("name", "my name is {person}")
 for ent in ner.extract_entities("my name is jarbas"):
     assert ent.as_json() == {'confidence': 1,
                              'data': {},
-                             'end': 17,
                              'entity_type': 'person',
                              'rules': [{'name': 'name',
                                         'rules': ['my name is {person}']}],
                              'source_text': 'my name is jarbas',
-                             'start': 11,
+                             'spans': [(11, 17)],
                              'value': 'jarbas'}

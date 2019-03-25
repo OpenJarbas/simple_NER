@@ -2,6 +2,16 @@ import re
 import types
 
 
+def find_all(a_str, sub):
+    start = 0
+    while True:
+        start = a_str.find(sub, start)
+        if start == -1:
+            return
+        yield start
+        start += len(sub)  # use start += 1 to find overlapping matches
+
+
 class Entity(object):
     _name = "entity"
 
@@ -12,6 +22,8 @@ class Entity(object):
         self._index = source_text.lower().find(value.lower())
         self._value = value
         self._source_text = source_text
+        self._all_indexes = [i for i in find_all(source_text.lower(),
+                                                 value.lower())]
         if rules and not isinstance(rules, list) and not isinstance(rules,
                                                                     tuple):
             rules = [rules]
@@ -30,6 +42,14 @@ class Entity(object):
                 setattr(self, "data_value", self.data[k])
             else:
                 setattr(self, k, self.data[k])
+
+    @property
+    def indexes(self):
+        return self._all_indexes
+
+    @property
+    def occurrence_number(self):
+        return len(self._all_indexes)
 
     @property
     def confidence(self):
@@ -52,18 +72,14 @@ class Entity(object):
         return self._source_text
 
     @property
-    def start_index(self):
-        return self._index
-
-    @property
-    def end_index(self):
-        return self.start_index + len(self.value)
+    def spans(self):
+        return [(i, i + len(self.value)) for i in self.indexes]
 
     def as_json(self):
-        return {"entity_type": self.entity_type, "start": self.start_index,
-                "end": self.end_index, "value": self.value,
-                "source_text": self.source_text, "confidence": self.confidence,
-                "rules": [r.as_json() for r in self.rules], "data": self.data}
+        return {"entity_type": self.entity_type, "spans": self.spans,
+                "value": self.value, "source_text": self.source_text,
+                "confidence": self.confidence, "data": self.data,
+                "rules": [r.as_json() for r in self.rules]}
 
     def __repr__(self):
         return self.entity_type + ":" + self.value
@@ -96,17 +112,45 @@ class SimpleNER(object):
         for e in examples:
             self._examples[name].append(Entity(e, name))
 
+    def in_place_annotation(self, text):
+        new_text = text
+        indexes = {}
+        # map ents to indexes
+        for ent in self.extract_entities(text):
+            indexs = ent.indexes
+            for index in indexs:
+                index += len(ent.value)
+                if index not in indexes:
+                    indexes[index] = []
+                if (ent.value, ent.entity_type) not in indexes[index]:
+                    indexes[index] += [(ent.value, ent.entity_type)]
+        # generate annotation
+        for index in indexes:
+            ano = "(" + "|".join([i[1] for i in indexes[index]]) + ")"
+            indexes[index] = ano
+        # replace, last index first
+        sor = sorted(indexes.keys(), reverse=True)
+        for i in sor:
+            new_text = new_text[:i] + indexes[i] + new_text[i:]
+        return new_text
+
     def entity_lookup(self, text, as_json=False):
         for ent_name in self.examples:
             for ent in self.examples[ent_name]:
 
                 if re.findall(r'\b' + ent.value.lower() + r"\b", text.lower()):
                     if as_json:
-                        yield Entity(value=ent.value, entity_type=ent.entity_type,
+                        yield Entity(value=ent.value,
+                                     entity_type=ent.entity_type,
                                      source_text=text).as_json()
                     else:
-                        yield Entity(value=ent.value, entity_type=ent.entity_type,
+                        yield Entity(value=ent.value,
+                                     entity_type=ent.entity_type,
                                      source_text=text)
+
+    def extract_entities(self, text, as_json=False):
+        for e in self.entity_lookup(text, as_json):
+            yield e
 
 
 if __name__ == "__main__":

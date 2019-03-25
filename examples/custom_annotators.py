@@ -18,9 +18,8 @@ for ent in ner.extract_entities("hitler only had one ball"):
     assert ent.as_json() == {'confidence': 1,
                              'data': {
                                  'known_for': ['killing jews', 'world war 2']},
-                             'end': 6,
                              'entity_type': 'bad_guy',
                              'rules': [],
                              'source_text': 'hitler only had one ball',
-                             'start': 0,
+                             'spans': [(0, 6)],
                              'value': 'hitler'}

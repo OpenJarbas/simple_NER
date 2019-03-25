@@ -15,8 +15,9 @@ class UnitsNER(NERWrapper):
         self.add_detector(self.annotate)
 
     def annotate(self, text):
-        spoken = parser.inline_parse_and_expand(text)
+
         for e in parser.parse(text):
+            spoken = e.to_spoken()
             data = e.__dict__
             data["unit"] = e.unit.__dict__
             data["unit"]["entity"] = e.unit["entity"].__dict__
@@ -24,6 +25,11 @@ class UnitsNER(NERWrapper):
             if e.unit["uri"] != e.unit["entity"]["uri"]:
                 e_type = e.unit["entity"]["uri"] + ":" + e.unit["uri"]
             data["spoken"] = spoken
+            data.pop("span")
+            if data["unit"]["currency_code"] is None:
+                data["unit"].pop("currency_code")
+            data = data.copy()
+            data.pop("surface")
             yield Entity(e.surface, e_type, source_text=text, data=data)
 
 

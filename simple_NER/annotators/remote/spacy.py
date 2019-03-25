@@ -26,9 +26,8 @@ if __name__ == "__main__":
     for r in ner.extract_entities("elon musk works in spaceX"):
         assert r.as_json() == {'confidence': 1,
                                'data': {},
-                               'end': 25,
                                'entity_type': 'ORG',
                                'rules': [],
                                'source_text': 'elon musk works in spaceX',
-                               'start': 19,
+                               'spans': [(19, 25)],
                                'value': 'spaceX'}

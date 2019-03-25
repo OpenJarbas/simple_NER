@@ -50,28 +50,17 @@ if __name__ == "__main__":
     ents = [r for r in ner.extract_entities(text)]
     assert ents[0].as_json() == {'confidence': 1,
                                  'data': {},
-                                 'end': 35,
                                  'entity_type': 'person',
                                  'rules': [],
                                  'source_text': 'The Israeli Prime Minister Benjamin Netanyahu has warned that '
                                                 'Iran poses a "threat to the entire world".',
-                                 'start': 27,
+                                 'spans': [(27, 35)],
                                  'value': 'Benjamin'}
-    assert ents[1].as_json() == {'confidence': 1,
-                                 'data': {},
-                                 'end': 45,
-                                 'entity_type': 'person',
-                                 'rules': [],
-                                 'source_text': 'The Israeli Prime Minister Benjamin Netanyahu has warned that '
-                                                'Iran poses a "threat to the entire world".',
-                                 'start': 36,
-                                 'value': 'Netanyahu'}
     assert ents[2].as_json() == {'confidence': 1,
                                  'data': {},
-                                 'end': 66,
                                  'entity_type': 'location',
                                  'rules': [],
                                  'source_text': 'The Israeli Prime Minister Benjamin Netanyahu has warned that '
                                                 'Iran poses a "threat to the entire world".',
-                                 'start': 62,
+                                 'spans': [(62, 66)],
                                  'value': 'Iran'}
