@@ -1,4 +1,4 @@
-from simple_NER.annotators.email import EmailNER
+from simple_NER.annotators.mail import EmailNER
 
 ner = EmailNER()
 text = "my email is jarbasai@mailfence.com"

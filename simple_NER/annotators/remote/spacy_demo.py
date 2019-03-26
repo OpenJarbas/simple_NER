@@ -10,7 +10,7 @@ def spacy_NER(text):
     return r.json()
 
 
-class SpacyNER(NERWrapper):
+class SpacyNERdemo(NERWrapper):
     def __init__(self):
         super().__init__()
         self.add_detector(self.annotate)
@@ -22,7 +22,7 @@ class SpacyNER(NERWrapper):
 
 
 if __name__ == "__main__":
-    ner = SpacyNER()
+    ner = SpacyNERdemo()
     for r in ner.extract_entities("elon musk works in spaceX"):
         assert r.as_json() == {'confidence': 1,
                                'data': {},

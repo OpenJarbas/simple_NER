@@ -13,11 +13,12 @@ simple rule based named entity recognition
       - [Email](#email)
       - [Date Time](#date-time)
       - [Units](#units)
+    + [NER wrappers](#ner-wrappers)
+      - [NLTK](#nltk)
+      - [Spacy](#spacy)
     + [Remote annotators](#remote-annotators)
       - [Spotlight](#spotlight)
-      - [Spacy Demo](#spacy-demo)
-      - [Polyglot Demo](#polyglot-demo)
-      - [AllenAi Nlp](#allenai-nlp)
+      - [Online Demos](#online-demos)
   * [Similar Projects](#similar-projects)
   
   
@@ -107,7 +108,6 @@ for e in ner.extract_entities(text):
                            'value': '12/10/1996'}
 ```
 
-
 ### Neural NER
 
 Entities are extracted using [Padatious](https://github.com/MycroftAI/padatious), An efficient and agile neural network  intent parser
@@ -183,7 +183,7 @@ for ent in ner.extract_entities("hitler only had one ball"):
 Emails can be annotated using regex rules
 
 ```python
-from simple_NER.annotators.email import EmailNER
+from simple_NER.annotators.mail import EmailNER
 
 ner = EmailNER()
 text = "my email is jarbasai@mailfence.com"
@@ -276,6 +276,55 @@ for r in ner.extract_entities("The LHC smashes proton beams at 12.8–13.0 TeV")
             'value': '12.8–13.0 TeV'}
 ```
 
+### NER wrappers
+
+wrappers are also provided for performing NER with external libs
+
+#### NLTK
+
+You need an extra install step in order to use this
+
+    pip install nltk
+
+```python
+from simple_NER.annotators.nltk_ner import NltkNER
+
+ner = NltkNER()
+text = """The Israeli Prime Minister Benjamin Netanyahu has warned that Iran poses a "threat to the entire world"."""
+for r in ner.extract_entities(text):
+    print(r.value, r.entity_type)
+    """
+    Israeli GPE
+    Benjamin Netanyahu PERSON
+    Iran GPE
+    """
+```
+
+#### Spacy
+
+Wrapper for [Spacy](https://github.com/explosion/spaCy) Industrial-strength Natural Language Processing
+
+You need an extra install step in order to use this
+
+    pip install spacy
+
+In addition you will need to download the spacy models
+
+```python
+from simple_NER.annotators.spacy_ner import SpacyNERdemo
+ner = SpacyNERdemo()
+text = "When Sebastian Thrun started working on self-driving cars at Google in 2007, few people outside of the company took him seriously."
+for e in ner.extract_entities(text):
+    print(e.value, e.entity_type)
+    """
+    Sebastian Thrun PERSON
+    Google FAC
+    2007 DATE
+    """
+```
+
+You might be interested in the [lookup extension](https://github.com/mpuig/spacy-lookup) for spacy 
+
 ### Remote annotators
 
 Some web based annotators are also provided
@@ -287,7 +336,6 @@ Using [pyspotlight](https://github.com/ubergrape/pyspotlight) we can annotate en
 extra install step
 
     pip install pyspotlight
-    
     
 ```python
 from simple_NER.annotators.remote.dbpedia import SpotlightNER
@@ -305,14 +353,14 @@ for r in ner.extract_entities("elon musk works in spaceX"):
     """
 ```
 
-#### Spacy Demo
+#### Online Demos
 
 webscrapping the [spacy NER demo](https://explosion.ai/demos/displacy-ent)
 
 ```python
-from simple_NER.annotators.remote.spacy import SpacyNER
+from simple_NER.annotators.remote.spacy_demo import SpacyNERdemo
 
-ner = SpacyNER()
+ner = SpacyNERdemo()
 for r in ner.extract_entities("elon musk works in spaceX"):
     assert r.as_json() == {'confidence': 1,
                            'data': {},
@@ -323,25 +371,15 @@ for r in ner.extract_entities("elon musk works in spaceX"):
                            'value': 'spaceX'}
 ```
 
-#### Polyglot Demo
-
 webscrapping the [polyglot NER demo](https://sites.google.com/site/rmyeid/projects/polylgot-ner#h.p_ID_63)
 
 ```python
-from simple_NER.annotators.remote.polyglot import PolyglotNER
+from simple_NER.annotators.remote.polyglot_demo import PolyglotNERdemo
 
-ner = PolyglotNER()
+ner = PolyglotNERdemo()
 text = """The Israeli Prime Minister Benjamin Netanyahu has warned that Iran poses a "threat to the entire world"."""
 ents = [r for r in ner.extract_entities(text)]
-assert ents[0].as_json() == {'confidence': 1,
-                             'data': {},
-                             'entity_type': 'person',
-                             'rules': [],
-                             'source_text': 'The Israeli Prime Minister Benjamin Netanyahu has warned that '
-                                            'Iran poses a "threat to the entire world".',
-                             'spans': [(27, 35)],
-                             'value': 'Benjamin'}
-assert ents[2].as_json() == {'confidence': 1,
+assert ents[-1].as_json() == {'confidence': 1,
                              'data': {},
                              'entity_type': 'location',
                              'rules': [],
@@ -351,8 +389,6 @@ assert ents[2].as_json() == {'confidence': 1,
                              'value': 'Iran'}
 ```
 
-#### AllenAi Nlp
-
 using the [AllenNLP demo](https://github.com/allenai/allennlp-demo)
 
 ```python
@@ -361,8 +397,7 @@ from simple_NER.annotators.remote.allenai import AllenNlpNER
 host = "http://demo.allennlp.org/predict/"
 
 ner = AllenNlpNER(host)
-ents = [r for r in
-        ner.extract_entities("Lisbon is the capital of Portugal")]
+ents = [r for r in ner.extract_entities("Lisbon is the capital of Portugal")]
 assert ents[0].as_json() == {'confidence': 1,
                              'data': {},
                              'entity_type': 'U-LOC',
@@ -370,21 +405,12 @@ assert ents[0].as_json() == {'confidence': 1,
                              'source_text': 'Lisbon is the capital of Portugal',
                              'spans': [(0, 6)],
                              'value': 'Lisbon'}
-assert ents[1].as_json() == {'confidence': 1,
-                             'data': {},
-                             'entity_type': 'U-LOC',
-                             'rules': [],
-                             'source_text': 'Lisbon is the capital of Portugal',
-                             'spans': [(25, 33)],
-                             'value': 'Portugal'}
 ```
 
 ## Similar Projects
 
 This is a rule based NER library, if you are looking for a out of the box solution check these projects
 
-- [Polyglot](https://github.com/aboSamoor/polyglot) - Multilingual text (NLP) processing toolkit
-- [Spacy](https://github.com/explosion/spaCy) and the [lookup extension](https://github.com/mpuig/spacy-lookup) - Industrial-strength Natural Language Processing
 - [NeuroNER](https://github.com/Franck-Dernoncourt/NeuroNER) - Named-entity recognition using neural networks. Easy-to-use and state-of-the-art results.
 - [Chatbot NER](https://github.com/hellohaptik/chatbot_ner) - Named Entity Recognition for chatbots
 - [EpiTator](https://github.com/ecohealthalliance/EpiTator) - Annotators for extracting epidemiological information from text.

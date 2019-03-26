@@ -34,7 +34,7 @@ def polyglot_NER(text):
     return NER
 
 
-class PolyglotNER(NERWrapper):
+class PolyglotNERdemo(NERWrapper):
     def __init__(self):
         super().__init__()
         self.add_detector(self.annotate)
@@ -45,7 +45,7 @@ class PolyglotNER(NERWrapper):
 
 
 if __name__ == "__main__":
-    ner = PolyglotNER()
+    ner = PolyglotNERdemo()
     text = """The Israeli Prime Minister Benjamin Netanyahu has warned that Iran poses a "threat to the entire world"."""
     ents = [r for r in ner.extract_entities(text)]
     assert ents[0].as_json() == {'confidence': 1,
