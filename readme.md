@@ -112,11 +112,6 @@ for e in ner.extract_entities(text):
 
 Entities are extracted using [Padatious](https://github.com/MycroftAI/padatious), An efficient and agile neural network  intent parser
  
-You need an extra install step in order to use this
-
-    pip install fann2==1.0.7
-    pip install padatious==0.4.5
-
 This will learn from the rules and extract more variations
 
 ```python
@@ -282,10 +277,6 @@ for r in ner.extract_entities("The LHC smashes proton beams at 12.8–13.0 TeV")
 wrappers are also provided for performing NER with external libs
 
 #### NLTK
-
-You need an extra install step in order to use this
-
-    pip install nltk
 
 ```python
 from simple_NER.annotators.nltk_ner import NltkNER

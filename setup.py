@@ -8,7 +8,8 @@ setup(
     url='https://github.com/JarbasAl/simple_NER',
     license='MIT',
     author='jarbasAI',
-    install_requires=["padaos"],
+    install_requires=["padaos", "fann2==1.0.7", "padatious", "nltk",
+                      "requests"],
     author_email='jarbasai@mailfence.com',
     description='rule based NER'
 )
