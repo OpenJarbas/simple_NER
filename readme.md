@@ -162,6 +162,7 @@ def extract_hitler(text):
 
 
 ner = NERWrapper()
+# add any number of detectors
 ner.add_detector(extract_hitler)
 
 for ent in ner.extract_entities("hitler only had one ball"):
@@ -311,8 +312,8 @@ You need an extra install step in order to use this
 In addition you will need to download the spacy models
 
 ```python
-from simple_NER.annotators.spacy_ner import SpacyNERdemo
-ner = SpacyNERdemo()
+from simple_NER.annotators.spacy_ner import SpacyNER
+ner = SpacyNER()
 text = "When Sebastian Thrun started working on self-driving cars at Google in 2007, few people outside of the company took him seriously."
 for e in ner.extract_entities(text):
     print(e.value, e.entity_type)
@@ -411,6 +412,7 @@ assert ents[0].as_json() == {'confidence': 1,
 
 This is a rule based NER library, if you are looking for a out of the box solution check these projects
 
+- [emnlp2017-bilstm-cnn-crf](https://github.com/UKPLab/emnlp2017-bilstm-cnn-crf) - BiLSTM-CRF implementation that used for NLP Sequence Tagging (for example POS-tagging, Chunking, or Named Entity Recognition).
 - [NeuroNER](https://github.com/Franck-Dernoncourt/NeuroNER) - Named-entity recognition using neural networks. Easy-to-use and state-of-the-art results.
 - [Chatbot NER](https://github.com/hellohaptik/chatbot_ner) - Named Entity Recognition for chatbots
 - [EpiTator](https://github.com/ecohealthalliance/EpiTator) - Annotators for extracting epidemiological information from text.
