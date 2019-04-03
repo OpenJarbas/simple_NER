@@ -13,6 +13,7 @@ simple rule based named entity recognition
       - [Email](#email)
       - [Date Time](#date-time)
       - [Units](#units)
+      - [Keywords](#keywords)
     + [NER wrappers](#ner-wrappers)
       - [NLTK](#nltk)
       - [Spacy](#spacy)
@@ -270,6 +271,32 @@ for r in ner.extract_entities("The LHC smashes proton beams at 12.8–13.0 TeV")
             'source_text': 'The LHC smashes proton beams at 12.8–13.0 TeV',
             'spans': [(32, 45)],
             'value': '12.8–13.0 TeV'}
+```
+
+#### Keywords
+
+The most relevant keywords can be annotated using [Rake](https://github.com/aneesha/RAKE)
+
+```python
+from simple_NER.annotators.keyword_ner import KeywordNER
+
+ner = KeywordNER()
+text = "Mycroft is a free and open-source voice assistant for Linux-based operating systems that uses a natural language user interface"
+
+# extract keywords
+ents = list(ner.extract_entities(text))  # generator, needs list()
+
+# group into tuples of (keyword, score)
+keywords = [(ent.value, ent.score) for ent in ents]
+keywords = sorted(keywords)  # sort alphabetically
+
+
+assert sorted(keywords) == [('free', 1.0),
+                            ('linux-based operating systems', 9.0),
+                            ('mycroft', 1.0),
+                            ('natural language user interface', 16.0),
+                            ('open-source voice assistant', 9.0)]
+
 ```
 
 ### NER wrappers
