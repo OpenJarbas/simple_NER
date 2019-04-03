@@ -390,24 +390,6 @@ for r in ner.extract_entities("elon musk works in spaceX"):
                            'value': 'spaceX'}
 ```
 
-webscrapping the [polyglot NER demo](https://sites.google.com/site/rmyeid/projects/polylgot-ner#h.p_ID_63)
-
-```python
-from simple_NER.annotators.remote.polyglot_demo import PolyglotNERdemo
-
-ner = PolyglotNERdemo()
-text = """The Israeli Prime Minister Benjamin Netanyahu has warned that Iran poses a "threat to the entire world"."""
-ents = [r for r in ner.extract_entities(text)]
-assert ents[-1].as_json() == {'confidence': 1,
-                             'data': {},
-                             'entity_type': 'location',
-                             'rules': [],
-                             'source_text': 'The Israeli Prime Minister Benjamin Netanyahu has warned that '
-                                            'Iran poses a "threat to the entire world".',
-                             'spans': [(62, 66)],
-                             'value': 'Iran'}
-```
-
 using the [AllenNLP demo](https://github.com/allenai/allennlp-demo)
 
 ```python

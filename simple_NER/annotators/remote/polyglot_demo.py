@@ -6,6 +6,8 @@ import requests
 
 def polyglot_NER(text):
     # DO NOT ABUSE THIS, dev purposes only
+    # TODO improve this,
+    # entities spanning more than 1 token are incorrectly handled
     data = {"text": text.replace(" ", "+"),
             "langs": "en",
             "tokenization": "tokenization",
