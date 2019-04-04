@@ -2,9 +2,10 @@ from setuptools import setup
 
 setup(
     name='simple_NER',
-    version='0.1.8',
+    version='0.1.8.1',
     packages=['simple_NER', 'simple_NER.rules', 'simple_NER.annotators',
-              'simple_NER.annotators.utils'],
+              'simple_NER.annotators.utils',
+              'simple_NER.annotators.utils.keywords'],
     url='https://github.com/JarbasAl/simple_NER',
     license='MIT',
     author='jarbasAI',
