@@ -1,6 +1,6 @@
 from simple_NER.annotators import NERWrapper
 from simple_NER import Entity
-import datefinder
+from dateparser.search import search_dates
 
 
 class DateTimeNER(NERWrapper):
@@ -9,6 +9,24 @@ class DateTimeNER(NERWrapper):
         self.add_detector(self.annotate)
 
     def annotate(self, text):
+
+        matches = search_dates(text)
+        for value, date in matches:
+            data = {
+                "timestamp": date.timestamp(),
+                "isoformat": date.isoformat(),
+                "weekday": date.isoweekday(),
+                "month": date.month,
+                "day": date.day,
+                "hour": date.hour,
+                "minute": date.minute,
+                "year": date.year
+            }
+            yield Entity(value, "date", source_text=text, data=data)
+
+    def _old_annotate(self, text):
+        # deprecated
+        import datefinder
         matches = datefinder.find_dates(text, index=True)
         for date, span in matches:
             value = text[span[0]:span[1]].strip()
