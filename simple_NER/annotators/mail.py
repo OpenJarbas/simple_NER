@@ -1,4 +1,4 @@
-from simple_NER.rules.regex import RegexNER
+from simple_NER.rules.rx import RegexNER
 
 
 class EmailNER(RegexNER):
