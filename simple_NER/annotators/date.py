@@ -54,7 +54,7 @@ def _annotate_datetime_en(string, dateNow=None, default_time=None):
             word = word.replace("'s", "")
 
             ordinals = ["rd", "st", "nd", "th"]
-            if word[0].isdigit():
+            if word and word[0].isdigit():
                 for ordinal in ordinals:
                     # "second" is the only case we should not do this
                     if ordinal in word and "second" not in word:
@@ -125,7 +125,7 @@ def _annotate_datetime_en(string, dateNow=None, default_time=None):
             resultStr = " ".join(words[idx + 1:])
             resultStr = ' '.join(resultStr.split())
             extractedDate = dateNow.replace(microsecond=0)
-            return [extractedDate, resultStr]
+            return [extractedDate, word, resultStr]
         elif wordNext in year_multiples:
             multiplier = None
             if is_numeric(word):
@@ -180,7 +180,7 @@ def _annotate_datetime_en(string, dateNow=None, default_time=None):
                 start -= 1
                 used += 1
                 # parse 5 days, 10 weeks, last week, next week
-        elif word == "day":
+        elif word == "day" and wordPrev:
             if wordPrev[0].isdigit():
                 dayOffset += int(wordPrev)
                 start -= 1
@@ -725,12 +725,22 @@ def _annotate_datetime_en(string, dateNow=None, default_time=None):
     extractedDate = dateNow.replace(microsecond=0)
 
     if datestr != "":
-        # date included an explicit date, e.g. "june 5" or "june 2, 2017"
+        if "-" in datestr: # date range, e.g. "February 21-27"
+            datestr = datestr.split("-")[0]
+        # date included an explicit date, e.g. "june 5"
         try:
             temp = datetime.strptime(datestr, "%B %d")
         except ValueError:
-            # Try again, allowing the year
-            temp = datetime.strptime(datestr, "%B %d %Y")
+            # date included an explicit date, e.g. "june 2, 2017"
+            try:
+                temp = datetime.strptime(datestr, "%B %d %Y")
+            except ValueError:
+                # date included an explicit date, e.g. "june 2017"
+                try:
+                    temp = datetime.strptime(datestr, "%B %Y")
+                except ValueError:
+                    # date included an explicit month, e.g. "june"
+                    temp = datetime.strptime(datestr, "%B")
         extractedDate = extractedDate.replace(hour=0, minute=0, second=0)
         if not hasYear:
             temp = temp.replace(year=extractedDate.year,
@@ -836,12 +846,21 @@ def _annotate_duration_en(text):
         'weeks': None
     }
 
+    time_units2 = {
+        'years': None,
+        'months': None,
+        'weeks': None,
+        'decades': None
+    }
+
     pattern = r"(?P<value>\d+(?:\.?\d+)?)\s+{unit}s?"
     norm_text = _convert_words_to_numbers(text)
     t = norm_text
     duration_text = text
+
     start = -1
     end = -1
+
     for unit in time_units:
         unit_pattern = pattern.format(unit=unit[:-1])  # remove 's' from unit
         matches = re.findall(unit_pattern, t)
@@ -853,14 +872,44 @@ def _annotate_duration_en(text):
             if start < 0 or n_start < start:
                 start = n_start
 
-            n_end = len(text) - text.rfind(unit) - len(unit)
-            if n_end > -1 and n_end > end:
+            n_end = text.rfind(unit) + len(unit)
+            if n_end > end:
                 end = n_end
-    if start > -1 and end > -1:
-        duration_text = text[start:end].strip()
+
+    for unit in time_units2:
+        unit_pattern = pattern.format(unit=unit[:-1])  # remove 's' from unit
+        matches = re.findall(unit_pattern, t)
+        value = sum(map(float, matches))
+        t = re.sub(unit_pattern, '', t)
+        if matches:
+            if time_units["days"] is None:
+                time_units["days"] = 0
+            if unit == "years":
+                time_units["days"] += value * 365
+            elif unit == "months":
+                time_units["days"] += value * 30
+            elif unit == "weeks":
+                time_units["days"] += value * 7
+            elif unit == "decades":
+                time_units["days"] += value * 3650
+
+            n_start = norm_text.find(str(int(value)))
+            if start < 0 or n_start < start:
+                start = n_start
+
+            n_end = text.rfind(unit) + len(unit)
+            if n_end > end:
+                end = n_end
+
+    if start > -1:
+        if end > start:
+            duration_text = duration_text[start:end]
+        else:
+            duration_text = duration_text[start:]
+
     duration = timedelta(**time_units) if any(time_units.values()) else None
 
-    return (duration, duration_text)
+    return (duration, duration_text.strip())
 
 
 class DateTimeNER(NERWrapper):
@@ -885,17 +934,23 @@ class DateTimeNER(NERWrapper):
     def annotate_datetime(self, text):
         date, value, rem = _annotate_datetime_en(text, self.anchor_date)
         while value:
-            data = {
-                "timestamp": date.timestamp(),
-                "isoformat": date.isoformat(),
-                "weekday": date.isoweekday(),
-                "month": date.month,
-                "day": date.day,
-                "hour": date.hour,
-                "minute": date.minute,
-                "year": date.year
-            }
-            yield Entity(value, "relative_date", source_text=text, data=data)
+            try:
+                data = {
+                    "timestamp": date.timestamp(),
+                    "isoformat": date.isoformat(),
+                    "weekday": date.isoweekday(),
+                    "month": date.month,
+                    "day": date.day,
+                    "hour": date.hour,
+                    "minute": date.minute,
+                    "year": date.year
+                }
+                yield Entity(value, "relative_date", source_text=text,
+                             data=data)
+            except OverflowError: # deep past / future
+                yield Entity(value, "date", source_text=text)
+            if not rem:
+                return
             date, value, rem = _annotate_datetime_en(rem, self.anchor_date)
 
     def annotate(self, text):
@@ -938,6 +993,39 @@ if __name__ == "__main__":
     from pprint import pprint
 
     ner = DateTimeNER()
+    for r in ner.extract_entities("What President served for five years , six months and 2 days ?"):
+        pprint(r.as_json())
+    """
+    {'confidence': 1,
+     'data': {'day': 6,
+              'hour': 0,
+              'isoformat': '2019-04-06T00:00:00+01:00',
+              'minute': 0,
+              'month': 4,
+              'timestamp': 1554505200.0,
+              'weekday': 6,
+              'year': 2019},
+     'entity_type': 'relative_date',
+     'rules': [],
+     'source_text': 'What President served for five years , six months and 2 days '
+                    '?',
+     'spans': [(54, 60)],
+     'value': '2 days'}
+     
+    {'confidence': 1,
+     'data': {'days': 2007,
+              'microseconds': 0,
+              'seconds': 0,
+              'spoken': 'two thousand, seven days ',
+              'total_seconds': 173404800.0},
+     'entity_type': 'duration',
+     'rules': [],
+     'source_text': 'What President served for five years , six months and 2 days '
+                    '?',
+     'spans': [(26, 60)],
+     'value': 'five years , six months and 2 days'}
+    """
+
     for r in ner.extract_entities("my birthday is on december 5th"):
         pprint(r.as_json())
 
@@ -954,3 +1042,18 @@ if __name__ == "__main__":
     """
     for r in ner.extract_entities("starts in 5 minutes"):
         pprint(r.as_json())
+    """
+    {'confidence': 1,
+     'data': {'days': 0,
+              'microseconds': 0,
+              'seconds': 300,
+              'spoken': 'five minutes',
+              'total_seconds': 300.0},
+     'entity_type': 'duration',
+     'rules': [],
+     'source_text': 'starts in 5 minutes',
+     'spans': [(10, 19)],
+     'value': '5 minutes'}
+    """
+
+
