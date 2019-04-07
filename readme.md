@@ -17,9 +17,9 @@ simple rule based named entity recognition
     + [NER wrappers](#ner-wrappers)
       - [NLTK](#nltk)
       - [Spacy](#spacy)
+      - [Cogcomp](#cogcomp)
     + [Remote annotators](#remote-annotators)
       - [Spotlight](#spotlight)
-      - [Cogcomp](#cogcomp)
       - [Online Demos](#online-demos)
   * [Similar Projects](#similar-projects)
   
@@ -335,6 +335,60 @@ You need an extra install step in order to use this
 
 In addition you will need to download the spacy models
 
+#### Cogcomp
+
+wrapper for [cogcomp-nlpy](https://github.com/CogComp/cogcomp-nlpy), needs manual install
+
+You can run the local pipeline
+
+```python
+from simple_NER.annotators.cogcomp_ner import CogcompNER
+
+ner = CogcompNER() # use ontonotes model
+# ner = CogcompNER(ontonotes=False)  # use connl model
+
+text = """"Helicopters will patrol the temporary no-fly zone around 
+New Jersey's MetLife Stadium Sunday, with F-16s based in Atlantic City 
+ready to be scrambled if an unauthorized aircraft does enter the 
+restricted airspace"""
+
+for r in ner.extract_entities(text):
+    print(r.value, r.entity_type)
+    """
+    New Jersey 's GPE
+    MetLife Stadium ORG
+    Sunday DATE
+    Atlantic City GPE
+    """
+
+```
+
+or the remote pipeline
+
+```python
+from simple_NER.annotators.remote.cogcomp import CogcompNER
+
+# you may use you own server, demo is limited to 100 queries/day
+host = None
+ner = CogcompNER(host) # use ontonotes model
+# ner = CogcompNER(host, ontonotes=False)  # use connl model
+
+text = """"Helicopters will patrol the temporary no-fly zone around 
+New Jersey's MetLife Stadium Sunday, with F-16s based in Atlantic City 
+ready to be scrambled if an unauthorized aircraft does enter the 
+restricted airspace"""
+
+for r in ner.extract_entities(text):
+    print(r.value, r.entity_type)
+    """
+    New Jersey 's GPE
+    MetLife Stadium ORG
+    Sunday DATE
+    Atlantic City GPE
+    """
+```
+
+
 ```python
 from simple_NER.annotators.spacy_ner import SpacyNER
 ner = SpacyNER()
@@ -372,33 +426,6 @@ for r in ner.extract_entities("elon musk works in spaceX"):
     spaceX Organisation http://dbpedia.org/resource/SpaceX
     spaceX Company http://dbpedia.org/resource/SpaceX
     spaceX Agent http://dbpedia.org/resource/SpaceX
-    """
-```
-
-#### Cogcomp
-
-wrapper for [cogcomp-nlpy](https://github.com/CogComp/cogcomp-nlpy), needs manual install
-
-```python
-from simple_NER.annotators.remote.cogcomp import CogcompNER
-
-# you may use you own server, demo is limited to 100 queries/day
-host = None
-ner = CogcompNER(host) # use ontonotes model
-# ner = CogcompNER(host, ontonotes=False)  # use connl model
-
-text = """"Helicopters will patrol the temporary no-fly zone around 
-New Jersey's MetLife Stadium Sunday, with F-16s based in Atlantic City 
-ready to be scrambled if an unauthorized aircraft does enter the 
-restricted airspace"""
-
-for r in ner.extract_entities(text):
-    print(r.value, r.entity_type)
-    """
-    New Jersey 's GPE
-    MetLife Stadium ORG
-    Sunday DATE
-    Atlantic City GPE
     """
 ```
 
