@@ -237,10 +237,6 @@ for r in ner.extract_entities("entries are due by January 4th, 2017 at 8:30pm"):
 
 Using [Quantulum3](https://github.com/nielstron/quantulum3) for information extraction of quantities, measurements and their units from unstructured text
 
-extra install step
-
-    pip install quantulum3
-    
     
 ```python
 from simple_NER.annotators.units import UnitsNER
@@ -361,9 +357,6 @@ Some web based annotators are also provided
 
 Using [pyspotlight](https://github.com/ubergrape/pyspotlight) we can annotate entities from dbpedia
 
-extra install step
-
-    pip install pyspotlight
     
 ```python
 from simple_NER.annotators.remote.dbpedia import SpotlightNER

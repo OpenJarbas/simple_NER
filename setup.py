@@ -24,7 +24,8 @@ setup(
     license='MIT',
     author='jarbasAI',
     install_requires=["padaos", "fann2==1.0.7", "padatious", "nltk",
-                      "requests", "mycroft_lang_utils"],
+                      "quantulum3", "requests", "mycroft_lang_utils",
+                      "pyspotlight"],
     author_email='jarbasai@mailfence.com',
     description='rule based NER'
 )
