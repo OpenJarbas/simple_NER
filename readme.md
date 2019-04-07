@@ -416,7 +416,10 @@ Using [pyspotlight](https://github.com/ubergrape/pyspotlight) we can annotate en
 ```python
 from simple_NER.annotators.remote.dbpedia import SpotlightNER
 
-ner = SpotlightNER()
+# you can also self host
+host='http://api.dbpedia-spotlight.org/en/annotate'
+
+ner = SpotlightNER(host)
 for r in ner.extract_entities("elon musk works in spaceX"):
     print(r.value, r.entity_type, r.uri)
     score = r.similarityScore
@@ -452,6 +455,7 @@ using the [AllenNLP demo](https://github.com/allenai/allennlp-demo)
 ```python
 from simple_NER.annotators.remote.allenai import AllenNlpNER
 
+# you can also self host
 host = "http://demo.allennlp.org/predict/"
 
 ner = AllenNlpNER(host)
