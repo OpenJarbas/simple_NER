@@ -6,7 +6,7 @@ from datetime import timedelta, datetime
 from dateutil.relativedelta import relativedelta
 from mycroft_lang_utils.lang.parse_en import _convert_words_to_numbers, \
     is_numeric, extractnumber_en
-from mycroft_lang_utils.format import nice_duration
+from mycroft_lang_utils.format import nice_duration, nice_date
 from mycroft_lang_utils.time import now_local
 
 
@@ -943,12 +943,14 @@ class DateTimeNER(NERWrapper):
                     "day": date.day,
                     "hour": date.hour,
                     "minute": date.minute,
-                    "year": date.year
+                    "year": date.year,
+                    "spoken": nice_date(date, now=self.anchor_date)
                 }
                 yield Entity(value, "relative_date", source_text=text,
                              data=data)
             except OverflowError: # deep past / future
-                yield Entity(value, "date", source_text=text)
+                yield Entity(value, "date", source_text=text,
+                             data={"spoken": value})
             if not rem:
                 return
             date, value, rem = _annotate_datetime_en(rem, self.anchor_date)
