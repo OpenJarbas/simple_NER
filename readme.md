@@ -19,6 +19,7 @@ simple rule based named entity recognition
       - [Spacy](#spacy)
     + [Remote annotators](#remote-annotators)
       - [Spotlight](#spotlight)
+      - [Cogcomp](#cogcomp)
       - [Online Demos](#online-demos)
   * [Similar Projects](#similar-projects)
   
