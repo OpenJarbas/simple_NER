@@ -471,12 +471,13 @@ assert ents[0].as_json() == {'confidence': 1,
 
 ## Similar Projects
 
-This is a rule based NER library, if you are looking for a out of the box solution check these projects
+This is a rule based NER library, if you are looking for an out of the box solution check these projects
 
 - [emnlp2017-bilstm-cnn-crf](https://github.com/UKPLab/emnlp2017-bilstm-cnn-crf) - BiLSTM-CRF implementation that used for NLP Sequence Tagging (for example POS-tagging, Chunking, or Named Entity Recognition).
 - [NeuroNER](https://github.com/Franck-Dernoncourt/NeuroNER) - Named-entity recognition using neural networks. Easy-to-use and state-of-the-art results.
-- [Chatbot NER](https://github.com/hellohaptik/chatbot_ner) - Named Entity Recognition for chatbots
+- [StanfordNLP](https://github.com/stanfordnlp/stanfordnlp) - The Stanford NLP Group's official Python NLP library. The latest fully neural pipeline from the CoNLL 2018 Shared Task and for accessing the Java Stanford CoreNLP server.
 - [EpiTator](https://github.com/ecohealthalliance/EpiTator) - Annotators for extracting epidemiological information from text.
+- [Chatbot NER](https://github.com/hellohaptik/chatbot_ner) - Named Entity Recognition for chatbots
 
 
 [![Donate with Bitcoin](https://en.cryptobadges.io/badge/micro/1QJNhKM8tVv62XSUrST2vnaMXh5ADSyYP8)](https://en.cryptobadges.io/donate/1QJNhKM8tVv62XSUrST2vnaMXh5ADSyYP8)
