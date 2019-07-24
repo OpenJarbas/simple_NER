@@ -4,9 +4,9 @@ from simple_NER import Entity
 try:
     import spacy
 except ImportError:
-    print("you need to install spacy")
-    print("pip install thinc")
+    print("you need to install spacy and download the model")
     print("pip install spacy")
+    print("python -m spacy download en_core_web_md")
     raise
 
 
