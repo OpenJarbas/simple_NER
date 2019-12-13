@@ -23,4 +23,5 @@ Something was messed up in pipy, jump a number for a fresh start
 - updated deprecated mycroft_lang_utils to lingua_franca
 
 [unreleased]: https://github.com/OpenJarbas/simple_NER/tree/dev
+[0.3.0]: https://github.com/OpenJarbas/simple_NER/tree/0.2.0
 [0.2.0]: https://github.com/OpenJarbas/simple_NER/tree/0.2.0
