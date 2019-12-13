@@ -19,4 +19,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - updated deprecated mycroft_lang_utils to lingua_franca
 
 [unreleased]: https://github.com/OpenJarbas/simple_NER/tree/dev
-[0.1.5]: https://github.com/OpenJarbas/simple_NER/tree/0.1.5
+[0.2.0]: https://github.com/OpenJarbas/simple_NER/tree/0.2.0
