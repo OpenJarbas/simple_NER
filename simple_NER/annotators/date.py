@@ -4,10 +4,9 @@ from simple_NER import Entity
 import re
 from datetime import timedelta, datetime
 from dateutil.relativedelta import relativedelta
-from mycroft_lang_utils.lang.parse_en import _convert_words_to_numbers, \
+from lingua_franca.lang.parse_en import _convert_words_to_numbers_en, \
     is_numeric, extractnumber_en
-from mycroft_lang_utils.format import nice_duration, nice_date
-from mycroft_lang_utils.time import now_local
+from lingua_franca.format import nice_duration, nice_date
 
 
 def _annotate_datetime_en(string, dateNow=None, default_time=None):
@@ -37,7 +36,7 @@ def _annotate_datetime_en(string, dateNow=None, default_time=None):
                          text consumed in the parsing, or None if no
                          date or time related text was found.
     """
-    dateNow = dateNow or now_local()
+    dateNow = dateNow or datetime.now()
 
     def clean_string(s):
         # clean unneeded punctuation and capitalization among other things.
@@ -854,7 +853,7 @@ def _annotate_duration_en(text):
     }
 
     pattern = r"(?P<value>\d+(?:\.?\d+)?)\s+{unit}s?"
-    norm_text = _convert_words_to_numbers(text)
+    norm_text = _convert_words_to_numbers_en(text)
     t = norm_text
     duration_text = text
 
@@ -915,7 +914,7 @@ def _annotate_duration_en(text):
 class DateTimeNER(NERWrapper):
     def __init__(self, anchor_date=None):
         super().__init__()
-        self.anchor_date = anchor_date or now_local()
+        self.anchor_date = anchor_date or datetime.now()
         self.add_detector(self.annotate_datetime)
         self.add_detector(self.annotate_duration)
 
@@ -960,24 +959,6 @@ class DateTimeNER(NERWrapper):
         from dateparser.search import search_dates
         matches = search_dates(text)
         for value, date in matches:
-            data = {
-                "timestamp": date.timestamp(),
-                "isoformat": date.isoformat(),
-                "weekday": date.isoweekday(),
-                "month": date.month,
-                "day": date.day,
-                "hour": date.hour,
-                "minute": date.minute,
-                "year": date.year
-            }
-            yield Entity(value, "date", source_text=text, data=data)
-
-    def _old_annotate(self, text):
-        # deprecated
-        import datefinder
-        matches = datefinder.find_dates(text, index=True)
-        for date, span in matches:
-            value = text[span[0]:span[1]].strip()
             data = {
                 "timestamp": date.timestamp(),
                 "isoformat": date.isoformat(),
