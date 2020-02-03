@@ -1,0 +1,3 @@
+include LICENSE.md
+include readme.md
+recursive-include simple_NER *
