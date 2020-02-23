@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.0]  - 2020-02-32
+
+### Added
+
+- Snips NER
+
 ## [0.3.1]  - 2020-02-02
 
 Data files were missing from pip
