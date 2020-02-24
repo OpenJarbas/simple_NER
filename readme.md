@@ -15,6 +15,7 @@ simple rule based named entity recognition
       - [Units](#units)
       - [Keywords](#keywords)
     + [NER wrappers](#ner-wrappers)
+      - [Snips](#snips)
       - [NLTK](#nltk)
       - [Spacy](#spacy)
       - [Cogcomp](#cogcomp)
@@ -308,6 +309,24 @@ assert sorted(keywords) == [('free', 1.0),
 ### NER wrappers
 
 wrappers are also provided for performing NER with external libs
+
+#### Snips
+
+If you have snips_nlu installed you can extract the [builtin entities](https://snips-nlu.readthedocs.io/en/latest/builtin_entities.html)
+
+```python
+from simple_NER.annotators.snips import SnipsNER
+
+ner = SnipsNER()
+
+text = "The farmer had 2 cows, The cows died after 5 days."
+for e in ner.extract_entities(text):
+    print(e.value, e.entity_type)
+    """
+    2 snips/number
+    after 5 days snips/date
+    """
+```
 
 #### NLTK
 
