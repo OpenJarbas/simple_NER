@@ -3,6 +3,6 @@ requests
 quantulum3
 pyspotlight
 fann2==1.0.7
-padatious==0.4.5
+padatious>=0.4.5
 nltk
-lingua_franca==0.1.0
+lingua_franca>=0.1.0

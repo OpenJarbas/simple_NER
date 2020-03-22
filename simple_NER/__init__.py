@@ -12,7 +12,7 @@ def find_all(a_str, sub):
         start += len(sub)  # use start += 1 to find overlapping matches
 
 
-class Entity(object):
+class Entity:
     _name = "entity"
 
     def __init__(self, value, entity_type=None, source_text="", rules=None,
@@ -85,7 +85,7 @@ class Entity(object):
         return self.entity_type + ":" + self.value
 
 
-class SimpleNER(object):
+class SimpleNER:
     def __init__(self):
         self._examples = {}
 
