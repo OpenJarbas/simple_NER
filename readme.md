@@ -11,6 +11,7 @@ simple rule based named entity recognition
     + [Neural NER](#neural-ner)
     + [Custom Annotators](#custom-annotators)
       - [Email](#email)
+      - [Locations](#locations)
       - [Date Time](#date-time)
       - [Units](#units)
       - [Keywords](#keywords)
@@ -198,9 +199,84 @@ for ent in ner.extract_entities(text):
                              'value': 'jarbasai@mailfence.com'}
 ```
 
+#### Locations
+
+Countries, Capital Cities and Cities can looked up from a wordlist
+
+```python
+from simple_NER.annotators.locations import LocationNER, CitiesNER
+
+
+ner = LocationNER()
+# NOTE: case sensitive, enable detection of lowercase cities/countries
+# ner = LocationNER(lowercase=True)
+
+
+text = """The Capital of Portugal is Lisbon"""
+for r in ner.extract_entities(text):
+    print(r.value, "-", r.entity_type)
+    print(r.as_json())
+
+    """
+    Portugal - Country
+    {'confidence': 1,
+     'data': {'capital': 'Lisbon',
+              'country_code': 'PT',
+              'hemisphere': 'north',
+              'latitude': 39.5,
+              'longitude': -8,
+              'name': 'Portugal',
+              'timezones': ['Europe/Lisbon',
+                            'Atlantic/Madeira',
+                            'Atlantic/Azores']},
+     'entity_type': 'Country',
+     'rules': [],
+     'source_text': 'The Capital of Portugal is Lisbon',
+     'spans': [(15, 23)],
+     'value': 'Portugal'}
+     
+    Lisbon - Capital City
+    {'confidence': 1,
+     'data': {'country_code': 'PT',
+              'country_name': 'Portugal',
+              'hemisphere': 'north',
+              'name': 'Lisbon'},
+     'entity_type': 'Capital City',
+     'rules': [],
+     'source_text': 'The Capital of Portugal is Lisbon',
+     'spans': [(27, 33)],
+     'value': 'Lisbon'}
+    """
+
+
+ner = CitiesNER()
+# NOTE: case sensitive
+# ner = CitiesNER(lowercase=True)
+
+text = """Braga is in northern portugal"""
+for r in ner.extract_entities(text):
+    print(r.value, "-", r.entity_type)
+    print(r.as_json())
+    """
+     Braga - City
+    {'confidence': 1,
+     'data': {'country_code': 'PT',
+              'hemisphere': 'north',
+              'latitude': 41.55032,
+              'longitude': -8.42005,
+              'name': 'Braga'},
+     'entity_type': 'City',
+     'rules': [],
+     'source_text': 'Braga is in northern portugal',
+     'spans': [(0, 5)],
+     'value': 'Braga'}
+    """
+```
+
+
 #### Date Time
 
-dates and durations can be annotated using [mycroft_lang_utils](https://github.com/JarbasAl/mycroft_lang_utils)
+dates and durations can be annotated using [lingua_franca](https://github.com/MycroftAI/lingua-franca)
 
 ```python
 from simple_NER.annotators.date import DateTimeNER
@@ -497,9 +573,3 @@ This is a rule based NER library, if you are looking for an out of the box solut
 - [StanfordNLP](https://github.com/stanfordnlp/stanfordnlp) - The Stanford NLP Group's official Python NLP library. The latest fully neural pipeline from the CoNLL 2018 Shared Task and for accessing the Java Stanford CoreNLP server.
 - [EpiTator](https://github.com/ecohealthalliance/EpiTator) - Annotators for extracting epidemiological information from text.
 - [Chatbot NER](https://github.com/hellohaptik/chatbot_ner) - Named Entity Recognition for chatbots
-
-
-[![Donate with Bitcoin](https://en.cryptobadges.io/badge/micro/1QJNhKM8tVv62XSUrST2vnaMXh5ADSyYP8)](https://en.cryptobadges.io/donate/1QJNhKM8tVv62XSUrST2vnaMXh5ADSyYP8)
-[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://paypal.me/jarbasai)
-<span class="badge-patreon"><a href="https://www.patreon.com/jarbasAI" title="Donate to this project using Patreon"><img src="https://img.shields.io/badge/patreon-donate-yellow.svg" alt="Patreon donate button" /></a></span>
-[![Say Thanks!](https://img.shields.io/badge/Say%20Thanks-!-1EAEDB.svg)](https://saythanks.io/to/JarbasAl)
