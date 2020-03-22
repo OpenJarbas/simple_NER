@@ -26,6 +26,8 @@ class LocationNER(NERWrapper):
         else:
             words = text.split()
 
+        conf = 0.75 if self.lowercase else 0.9
+
         for word in words:
             for country in self.countries:
 
@@ -50,13 +52,15 @@ class LocationNER(NERWrapper):
                     yield Entity(word,
                                  "Country",
                                  source_text=text,
-                                 data=data)
+                                 data=data,
+                                 confidence=conf)
                 elif word == code:
                     data = country
                     yield Entity(word,
                                  "Country_code",
                                  source_text=text,
-                                 data=data)
+                                 data=data,
+                                 confidence=conf)
                 elif word == capital:
                     data = {"country_name": name,
                             "country_code": code,
@@ -65,7 +69,8 @@ class LocationNER(NERWrapper):
                     yield Entity(word,
                                  "Capital City",
                                  source_text=text,
-                                 data=data)
+                                 data=data,
+                                 confidence=conf)
 
 
 class CitiesNER(NERWrapper):
@@ -91,6 +96,8 @@ class CitiesNER(NERWrapper):
         else:
             words = text.split()
 
+        conf = 0.75 if self.lowercase else 0.9
+
         for word in words:
             for city in self.cities:
                 code = city["country"]
@@ -114,7 +121,8 @@ class CitiesNER(NERWrapper):
                     yield Entity(data["name"],
                                  "City",
                                  source_text=text,
-                                 data=data)
+                                 data=data,
+                                 confidence=conf)
 
 
 if __name__ == "__main__":
