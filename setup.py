@@ -14,7 +14,7 @@ extra_files = package_files('simple_NER')
 
 setup(
     name='simple_NER',
-    version='0.4.1',
+    version='0.4.3',
     packages=['simple_NER', 'simple_NER.rules', 'simple_NER.annotators',
               'simple_NER.annotators.remote', 'simple_NER.annotators.utils',
               'simple_NER.annotators.utils.keywords'],

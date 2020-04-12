@@ -11,6 +11,7 @@ simple rule based named entity recognition
     + [Neural NER](#neural-ner)
     + [Custom Annotators](#custom-annotators)
       - [Email](#email)
+      - [Names](#names)
       - [Locations](#locations)
       - [Date Time](#date-time)
       - [Units](#units)
@@ -197,6 +198,24 @@ for ent in ner.extract_entities(text):
                              'source_text': 'my email is jarbasai@mailfence.com',
                              'spans': [(12, 34)],
                              'value': 'jarbasai@mailfence.com'}
+```
+
+#### Names
+
+Extracting Proper Nouns with regex
+
+```python
+from simple_NER.annotators.names import NamesNER
+
+ner = NamesNER()
+text = "I am JarbasAI , but my real name is Casimiro"
+for e in ner.extract_entities(text):
+    print(e.as_json())
+    
+"""
+{'entity_type': 'Noun', 'spans': [(5, 13)], 'value': 'JarbasAI', 'source_text': 'I am JarbasAI , but my real name is Casimiro', 'confidence': 0.8, 'data': {}, 'rules': [{'name': 'names_rx', 'rules': ["\\b((?:[A-Z][a-z][-A-Za-z']*(?: *[A-Z][a-z][-A-Za-z']*)*)\\b|\\b(?:[A-Z][a-z][-A-Za-z']*))\\b"]}]}
+{'entity_type': 'Noun', 'spans': [(36, 44)], 'value': 'Casimiro', 'source_text': 'I am JarbasAI , but my real name is Casimiro', 'confidence': 0.8, 'data': {}, 'rules': [{'name': 'names_rx', 'rules': ["\\b((?:[A-Z][a-z][-A-Za-z']*(?: *[A-Z][a-z][-A-Za-z']*)*)\\b|\\b(?:[A-Z][a-z][-A-Za-z']*))\\b"]}]}
+"""
 ```
 
 #### Locations

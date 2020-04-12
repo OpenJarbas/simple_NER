@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.3]  - 2020-04-12
+
+### Added
+
+- Names Ner
+    - regex for extracting Proper Nouns
+    
 ### Changed
 
 - Location NER confidence reduced
@@ -49,6 +56,7 @@ Something was messed up in pipy, jump a number for a fresh start
 - updated deprecated mycroft_lang_utils to lingua_franca
 
 [unreleased]: https://github.com/OpenJarbas/simple_NER/tree/dev
+[0.4.3]: https://github.com/OpenJarbas/simple_NER/tree/0.4.3
 [0.4.1]: https://github.com/OpenJarbas/simple_NER/tree/0.4.1
 [0.4.0]: https://github.com/OpenJarbas/simple_NER/tree/0.4.0
 [0.3.0]: https://github.com/OpenJarbas/simple_NER/tree/0.3.0
