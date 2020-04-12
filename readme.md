@@ -22,7 +22,7 @@ simple rule based named entity recognition
       - [Cogcomp](#cogcomp)
     + [Remote annotators](#remote-annotators)
       - [Spotlight](#spotlight)
-      - [Online Demos](#online-demos)
+      - [AllenNLP](#allennlp)
   * [Similar Projects](#similar-projects)
   
   
@@ -387,12 +387,6 @@ for r in ner.extract_entities(text):
 
 Wrapper for [Spacy](https://github.com/explosion/spaCy) Industrial-strength Natural Language Processing
 
-You need an extra install step in order to use this
-
-    pip install spacy
-
-In addition you will need to download the spacy models
-
 ```python
 from simple_NER.annotators.spacy_ner import SpacyNER
 ner = SpacyNER()
@@ -410,7 +404,7 @@ You might be interested in the [lookup extension](https://github.com/mpuig/spacy
 
 #### Cogcomp
 
-wrapper for [cogcomp-nlpy](https://github.com/CogComp/cogcomp-nlpy), needs manual install
+wrapper for [cogcomp-nlpy](https://github.com/CogComp/cogcomp-nlpy)
 
 You can run the local pipeline
 
@@ -461,7 +455,6 @@ for r in ner.extract_entities(text):
     """
 ```
 
-
 ### Remote annotators
 
 Some web based annotators are also provided
@@ -490,23 +483,7 @@ for r in ner.extract_entities("elon musk works in spaceX"):
     """
 ```
 
-#### Online Demos
-
-webscrapping the [spacy NER demo](https://explosion.ai/demos/displacy-ent)
-
-```python
-from simple_NER.annotators.remote.spacy_demo import SpacyNERdemo
-
-ner = SpacyNERdemo()
-for r in ner.extract_entities("elon musk works in spaceX"):
-    assert r.as_json() == {'confidence': 1,
-                           'data': {},
-                           'entity_type': 'ORG',
-                           'rules': [],
-                           'source_text': 'elon musk works in spaceX',
-                           'spans': [(19, 25)],
-                           'value': 'spaceX'}
-```
+#### AllenNLP
 
 using the [AllenNLP demo](https://github.com/allenai/allennlp-demo)
 
