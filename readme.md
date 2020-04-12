@@ -5,7 +5,6 @@ simple rule based named entity recognition
 - [Simple NER](#simple-ner)
   * [Install](#install)
   * [Usage](#usage)
-    + [Word Lookup NER](#word-lookup-ner)
     + [Rule Based NER](#rule-based-ner)
     + [Regex NER](#regex-ner)
     + [Neural NER](#neural-ner)
@@ -41,30 +40,6 @@ from source
     pip install .
     
 ## Usage
-    
-### Word Lookup NER
-
-the simplest possible NER is checking for the existence of a word in text
-
-
-```python
-from simple_NER import SimpleNER
-
-ner = SimpleNER()
-ner.add_entity_examples("person", ["bob", "jon", "amy", "kevin"])
-
-assert ner.is_match("jon is ugly", "person")
-assert not ner.is_match("i like pizza", "person")
-
-for ent in ner.entity_lookup("where is Kevin", as_json=True):
-    assert ent == {'confidence': 1,
-                   'data': {},
-                   'entity_type': 'person',
-                   'rules': [],
-                   'source_text': 'where is Kevin',
-                   'spans': [(9, 14)],
-                   'value': 'kevin'}
-```
 
 ### Rule Based NER
 
