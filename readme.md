@@ -2,9 +2,8 @@
 
 simple rule based named entity recognition
 
-- [Simple NER](#simple-ner)
-  * [Install](#install)
-  * [Usage](#usage)
+* [Install](#install)
+* [Usage](#usage)
     + [Rule Based NER](#rule-based-ner)
     + [Regex NER](#regex-ner)
     + [Neural NER](#neural-ner)
