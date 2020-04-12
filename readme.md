@@ -15,15 +15,14 @@ simple rule based named entity recognition
       - [Date Time](#date-time)
       - [Units](#units)
       - [Keywords](#keywords)
+    + [Remote annotators](#remote-annotators)
+      - [Spotlight](#spotlight)
+      - [AllenNLP](#allennlp)
     + [NER wrappers](#ner-wrappers)
       - [Snips](#snips)
       - [NLTK](#nltk)
       - [Spacy](#spacy)
       - [Cogcomp](#cogcomp)
-    + [Remote annotators](#remote-annotators)
-      - [Spotlight](#spotlight)
-      - [AllenNLP](#allennlp)
-  * [Similar Projects](#similar-projects)
   
   
 ## Install
@@ -345,6 +344,55 @@ assert sorted(keywords) == [('free', 1.0),
 
 ```
 
+### Remote annotators
+
+Some web based annotators are also provided
+
+#### Spotlight
+
+Using [pyspotlight](https://github.com/ubergrape/pyspotlight) we can annotate entities from dbpedia
+
+    
+```python
+from simple_NER.annotators.remote.dbpedia import SpotlightNER
+
+# you can also self host
+host='http://api.dbpedia-spotlight.org/en/annotate'
+
+ner = SpotlightNER(host)
+for r in ner.extract_entities("elon musk works in spaceX"):
+    print(r.value, r.entity_type, r.uri)
+    score = r.similarityScore
+    """
+    elon musk Person http://dbpedia.org/resource/Elon_Musk
+    elon musk Agent http://dbpedia.org/resource/Elon_Musk
+    spaceX Organisation http://dbpedia.org/resource/SpaceX
+    spaceX Company http://dbpedia.org/resource/SpaceX
+    spaceX Agent http://dbpedia.org/resource/SpaceX
+    """
+```
+
+#### AllenNLP
+
+using the [AllenNLP demo](https://github.com/allenai/allennlp-demo)
+
+```python
+from simple_NER.annotators.remote.allenai import AllenNlpNER
+
+# you can also self host
+host = "http://demo.allennlp.org/predict/"
+
+ner = AllenNlpNER(host)
+ents = [r for r in ner.extract_entities("Lisbon is the capital of Portugal")]
+assert ents[0].as_json() == {'confidence': 1,
+                             'data': {},
+                             'entity_type': 'U-LOC',
+                             'rules': [],
+                             'source_text': 'Lisbon is the capital of Portugal',
+                             'spans': [(0, 6)],
+                             'value': 'Lisbon'}
+```
+
 ### NER wrappers
 
 wrappers are also provided for performing NER with external libs
@@ -454,62 +502,3 @@ for r in ner.extract_entities(text):
     Atlantic City GPE
     """
 ```
-
-### Remote annotators
-
-Some web based annotators are also provided
-
-#### Spotlight
-
-Using [pyspotlight](https://github.com/ubergrape/pyspotlight) we can annotate entities from dbpedia
-
-    
-```python
-from simple_NER.annotators.remote.dbpedia import SpotlightNER
-
-# you can also self host
-host='http://api.dbpedia-spotlight.org/en/annotate'
-
-ner = SpotlightNER(host)
-for r in ner.extract_entities("elon musk works in spaceX"):
-    print(r.value, r.entity_type, r.uri)
-    score = r.similarityScore
-    """
-    elon musk Person http://dbpedia.org/resource/Elon_Musk
-    elon musk Agent http://dbpedia.org/resource/Elon_Musk
-    spaceX Organisation http://dbpedia.org/resource/SpaceX
-    spaceX Company http://dbpedia.org/resource/SpaceX
-    spaceX Agent http://dbpedia.org/resource/SpaceX
-    """
-```
-
-#### AllenNLP
-
-using the [AllenNLP demo](https://github.com/allenai/allennlp-demo)
-
-```python
-from simple_NER.annotators.remote.allenai import AllenNlpNER
-
-# you can also self host
-host = "http://demo.allennlp.org/predict/"
-
-ner = AllenNlpNER(host)
-ents = [r for r in ner.extract_entities("Lisbon is the capital of Portugal")]
-assert ents[0].as_json() == {'confidence': 1,
-                             'data': {},
-                             'entity_type': 'U-LOC',
-                             'rules': [],
-                             'source_text': 'Lisbon is the capital of Portugal',
-                             'spans': [(0, 6)],
-                             'value': 'Lisbon'}
-```
-
-## Similar Projects
-
-This is a rule based NER library, if you are looking for an out of the box solution check these projects
-
-- [emnlp2017-bilstm-cnn-crf](https://github.com/UKPLab/emnlp2017-bilstm-cnn-crf) - BiLSTM-CRF implementation that used for NLP Sequence Tagging (for example POS-tagging, Chunking, or Named Entity Recognition).
-- [NeuroNER](https://github.com/Franck-Dernoncourt/NeuroNER) - Named-entity recognition using neural networks. Easy-to-use and state-of-the-art results.
-- [StanfordNLP](https://github.com/stanfordnlp/stanfordnlp) - The Stanford NLP Group's official Python NLP library. The latest fully neural pipeline from the CoNLL 2018 Shared Task and for accessing the Java Stanford CoreNLP server.
-- [EpiTator](https://github.com/ecohealthalliance/EpiTator) - Annotators for extracting epidemiological information from text.
-- [Chatbot NER](https://github.com/hellohaptik/chatbot_ner) - Named Entity Recognition for chatbots
