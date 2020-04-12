@@ -9,7 +9,7 @@ simple rule based named entity recognition
     + [Rule Based NER](#rule-based-ner)
     + [Regex NER](#regex-ner)
     + [Neural NER](#neural-ner)
-    + [Custom Annotators](#custom-annotators)
+    + [Annotators](#annotators)
       - [Email](#email)
       - [Names](#names)
       - [Locations](#locations)
@@ -146,7 +146,7 @@ for ent in ner.extract_entities("name is kevin"):
                              'value': 'kevin'}
 ```
 
-### Custom Annotators
+### Annotators
 
 you can create your own annotators
 
@@ -220,7 +220,7 @@ for e in ner.extract_entities(text):
 
 #### Locations
 
-Countries, Capital Cities and Cities can looked up from a wordlist
+Countries, Capital Cities and Cities can be looked up from a wordlist
 
 ```python
 from simple_NER.annotators.locations import LocationNER, CitiesNER
