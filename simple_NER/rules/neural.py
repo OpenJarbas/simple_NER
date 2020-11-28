@@ -1,15 +1,16 @@
-try:
-    from padatious import IntentContainer
-except ImportError:
-    print("padatious not found, run")
-    print("pip install fann2==1.0.7")
-    print("pip install padatious==0.4.5")
-    raise
-
+from simple_NER.utils.log import LOG
 from simple_NER.rules import RuleNER
 from simple_NER import Entity
 from os.path import expanduser, isdir, join
 from os import makedirs
+
+try:
+    from padatious import IntentContainer
+except ImportError:
+    LOG.error("padatious not found, run")
+    LOG.error("pip install fann2==1.0.7")
+    LOG.error("pip install padatious==0.4.5")
+    raise
 
 
 class NeuralNER(RuleNER):

@@ -1,11 +1,11 @@
 from simple_NER.annotators import NERWrapper
 from simple_NER import Entity
-
+from simple_NER.utils.log import LOG
 try:
     from quantulum3 import parser
 except ImportError:
-    print("you need to install quantulum3")
-    print("pip install quantulum3")
+    LOG.error("you need to install quantulum3")
+    LOG.error("pip install quantulum3")
     raise
 
 

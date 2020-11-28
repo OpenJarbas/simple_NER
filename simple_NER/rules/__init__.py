@@ -2,7 +2,7 @@ from padaos import IntentContainer
 from simple_NER import Entity, SimpleNER
 
 
-class Rule(object):
+class Rule:
     def __init__(self, name, rules):
         self._name = name
         self._rules = rules

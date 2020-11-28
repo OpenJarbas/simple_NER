@@ -1,13 +1,13 @@
 from simple_NER.annotators import NERWrapper
 from simple_NER import Entity
-
+from simple_NER.utils.log import LOG
 
 try:
     from snips_nlu.entity_parser import BuiltinEntityParser
 except ImportError:
-    print("you need to install snips_nlu")
-    print("pip install snips-nlu")
-    print("python -m snips_nlu download end")
+    LOG.error("you need to install snips_nlu")
+    LOG.error("pip install snips-nlu")
+    LOG.error("python -m snips_nlu download end")
     raise
 
 

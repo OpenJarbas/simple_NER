@@ -7,7 +7,7 @@ from lingua_franca.lang.parse_en import _convert_words_to_numbers_en
 from lingua_franca.format import nice_duration, nice_date
 from lingua_franca import load_language
 from simple_NER.utils.diff import TextDiff
-
+from simple_NER.utils.log import LOG
 
 load_language("en")
 
@@ -24,7 +24,7 @@ class DateTimeNER(NERWrapper):
         # spans will fail
         conv = _convert_words_to_numbers_en(text)
         if conv != text:
-            print("WARNING - text was normalized to: {t}".format(t=conv))
+            LOG.debug("WARNING - text was normalized to: {t}".format(t=conv))
         delta, remainder = extract_duration(text)
         if delta:
             d = TextDiff(conv, remainder)
@@ -46,7 +46,7 @@ class DateTimeNER(NERWrapper):
         # spans will fail
         conv = _convert_words_to_numbers_en(text)
         if conv != text:
-            print("WARNING - text was normalized to: {t}".format(t=conv))
+            LOG.debug("WARNING - text was normalized to: {t}".format(t=conv))
         dt = extract_datetime(conv, self.anchor_date)
         if dt:
             date, remainder = dt

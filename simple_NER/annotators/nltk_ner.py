@@ -1,5 +1,6 @@
 from simple_NER.annotators import NERWrapper
 from simple_NER import Entity
+from simple_NER.utils.log import LOG
 
 try:
     import nltk
@@ -8,8 +9,8 @@ try:
     nltk.download('maxent_ne_chunker')
     nltk.download('words')
 except ImportError:
-    print("you need to install nltk")
-    print("pip install nltk")
+    LOG.error("you need to install nltk")
+    LOG.error("pip install nltk")
     raise
 
 

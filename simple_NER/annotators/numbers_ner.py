@@ -3,6 +3,7 @@ from simple_NER import Entity
 from lingua_franca.lang.parse_en import _convert_words_to_numbers_en
 from lingua_franca import load_language
 from simple_NER.utils.diff import TextDiff
+from simple_NER.utils.log import LOG
 
 load_language("en")
 
@@ -17,7 +18,7 @@ class NumberNER(NERWrapper):
     def annotate_written_numbers(self, text):
         if text.lower() != text:
             text = text.lower()
-            print("WARNING - text was normalized to: {t}".format(t=text))
+            LOG.debug("WARNING - text was normalized to: {t}".format(t=text))
 
         replaced = _convert_words_to_numbers_en(text,
                                                 short_scale=self.short_scale,
