@@ -1,4 +1,4 @@
-from simple_NER.annotators.units import UnitsNER
+from simple_NER.annotators.units_ner import UnitsNER
 
 ner = UnitsNER()
 for r in ner.extract_entities("The LHC smashes proton beams at 12.8–13.0 TeV"):

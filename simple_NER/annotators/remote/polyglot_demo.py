@@ -47,22 +47,34 @@ class PolyglotNERdemo(NERWrapper):
 
 
 if __name__ == "__main__":
+    from pprint import pprint
     ner = PolyglotNERdemo()
     text = """The Israeli Prime Minister Benjamin Netanyahu has warned that Iran poses a "threat to the entire world"."""
-    ents = [r for r in ner.extract_entities(text)]
-    assert ents[0].as_json() == {'confidence': 1,
-                                 'data': {},
-                                 'entity_type': 'person',
-                                 'rules': [],
-                                 'source_text': 'The Israeli Prime Minister Benjamin Netanyahu has warned that '
-                                                'Iran poses a "threat to the entire world".',
-                                 'spans': [(27, 35)],
-                                 'value': 'Benjamin'}
-    assert ents[2].as_json() == {'confidence': 1,
-                                 'data': {},
-                                 'entity_type': 'location',
-                                 'rules': [],
-                                 'source_text': 'The Israeli Prime Minister Benjamin Netanyahu has warned that '
-                                                'Iran poses a "threat to the entire world".',
-                                 'spans': [(62, 66)],
-                                 'value': 'Iran'}
+    for e in ner.extract_entities(text):
+        pprint(e.as_json())
+        """
+        {'confidence': 1,
+         'data': {},
+         'entity_type': 'person',
+         'rules': [],
+         'source_text': 'The Israeli Prime Minister Benjamin Netanyahu has warned that '
+                        'Iran poses a "threat to the entire world".',
+         'spans': [(27, 35)],
+         'value': 'Benjamin'}
+        {'confidence': 1,
+         'data': {},
+         'entity_type': 'person',
+         'rules': [],
+         'source_text': 'The Israeli Prime Minister Benjamin Netanyahu has warned that '
+                        'Iran poses a "threat to the entire world".',
+         'spans': [(36, 45)],
+         'value': 'Netanyahu'}
+        {'confidence': 1,
+         'data': {},
+         'entity_type': 'location',
+         'rules': [],
+         'source_text': 'The Israeli Prime Minister Benjamin Netanyahu has warned that '
+                        'Iran poses a "threat to the entire world".',
+         'spans': [(62, 66)],
+         'value': 'Iran'}
+        """

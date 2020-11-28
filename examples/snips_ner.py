@@ -1,4 +1,4 @@
-from simple_NER.annotators.snips import SnipsNER
+from simple_NER.annotators.snips_ner import SnipsNER
 
 ner = SnipsNER()
 

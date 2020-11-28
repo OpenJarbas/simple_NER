@@ -22,12 +22,24 @@ class SpacyNERdemo(NERWrapper):
 
 
 if __name__ == "__main__":
+    from pprint import pprint
     ner = SpacyNERdemo()
     for r in ner.extract_entities("elon musk works in spaceX"):
-        assert r.as_json() == {'confidence': 1,
-                               'data': {},
-                               'entity_type': 'ORG',
-                               'rules': [],
-                               'source_text': 'elon musk works in spaceX',
-                               'spans': [(19, 25)],
-                               'value': 'spaceX'}
+        pprint(r.as_json())
+        """
+        {'confidence': 1,
+         'data': {},
+         'entity_type': 'PERSON',
+         'rules': [],
+         'source_text': 'elon musk works in spaceX',
+         'spans': [(0, 9)],
+         'value': 'elon musk'}
+        {'confidence': 1,
+         'data': {},
+         'entity_type': 'ORG',
+         'rules': [],
+         'source_text': 'elon musk works in spaceX',
+         'spans': [(19, 25)],
+         'value': 'spaceX'}
+        """
+
