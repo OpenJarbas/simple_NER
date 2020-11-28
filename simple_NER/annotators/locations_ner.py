@@ -1,6 +1,6 @@
 from simple_NER.annotators import NERWrapper
 from simple_NER import Entity
-from simple_NER.util import resolve_resource_file
+from simple_NER.utils import resolve_resource_file
 import json
 
 

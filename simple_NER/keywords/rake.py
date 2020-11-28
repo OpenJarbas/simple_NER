@@ -8,6 +8,7 @@ import re
 import operator
 from simple_NER.settings import STOPLIST
 
+
 def is_number(s):
     try:
         float(s) if '.' in s else int(s)
@@ -43,7 +44,7 @@ def separate_words(text, min_word_return_size):
         # leave numbers in phrase, but don't count as words, since they tend to invalidate scores of their phrases
         if len(
                 current_word) > min_word_return_size and current_word != '' and not is_number(
-                current_word):
+            current_word):
             words.append(current_word)
     return words
 
@@ -104,7 +105,7 @@ def calculate_word_scores(phraseList):
     for item in word_frequency:
         word_score.setdefault(item, 0)
         word_score[item] = word_degree[item] / (
-                    word_frequency[item] * 1.0)  # orig.
+                word_frequency[item] * 1.0)  # orig.
     # word_score[item] = word_frequency[item]/(word_degree[item] * 1.0) #exp.
     return word_score
 
@@ -121,7 +122,7 @@ def generate_candidate_keyword_scores(phrase_list, word_score):
     return keyword_candidates
 
 
-class Rake(object):
+class Rake:
     def __init__(self, stop_words_path=STOPLIST):
         self.stop_words_path = stop_words_path
         self.__stop_words_pattern = build_stop_word_regex(stop_words_path)
@@ -179,4 +180,5 @@ if __name__ == "__main__":
     rake = Rake("SmartStoplist.txt")
     keywords = rake.run(text)
     from pprint import pprint
+
     pprint(keywords)

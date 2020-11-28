@@ -1,6 +1,6 @@
 from simple_NER.annotators import NERWrapper
 from simple_NER import Entity
-from simple_NER.annotators.utils.keywords.rake import Rake
+from simple_NER.keywords.rake import Rake
 
 
 class KeywordNER(NERWrapper):

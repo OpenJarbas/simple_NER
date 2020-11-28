@@ -1,5 +1,6 @@
-from os.path import join, dirname, isfile, expanduser, isdir
+from os.path import join, isfile, expanduser
 from os import listdir
+from simple_NER.settings import RESOURES_DIR
 
 
 def resolve_resource_file(res_name, lang="en-us"):
@@ -22,25 +23,24 @@ def resolve_resource_file(res_name, lang="en-us"):
         return res_name
 
     # Next look for /simple_NER/res/res_name
-    data_dir = join(dirname(__file__), "res")
-    filename = expanduser(join(data_dir, res_name))
+    filename = expanduser(join(RESOURES_DIR, res_name))
     if isfile(filename):
         return filename
 
     # Next look for /simple_NER/res/{lang}/res_name
-    data_dir = join(dirname(__file__), "res", lang)
+    data_dir = join(RESOURES_DIR, lang)
     filename = expanduser(join(data_dir, res_name))
     if isfile(filename):
         return filename
 
     # Next look for /simple_NER/res/{lang_short}/res_name
-    data_dir = join(dirname(__file__), "res", lang.split("-")[0])
+    data_dir = join(RESOURES_DIR, lang.split("-")[0])
     filename = expanduser(join(data_dir, res_name))
     if isfile(filename):
         return filename
 
     # Next look for /simple_NER/res/{lang-short}-XX/res_name
-    data_dir = join(dirname(__file__), "res")
+    data_dir = join(RESOURES_DIR)
     for folder in listdir(data_dir):
         if folder.startswith(lang.split("-")[0]):
             filename = expanduser(join(data_dir, folder, res_name))
