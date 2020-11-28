@@ -417,7 +417,7 @@ Some web based annotators are also provided
 
 #### Spotlight
 
-Using [pyspotlight](https://github.com/ubergrape/pyspotlight) we can annotate entities from dbpedia
+Using [spotlight](https://www.dbpedia-spotlight.org/demo/) we can annotate entities from dbpedia
 
 ```python
 from simple_NER.annotators.remote.dbpedia import SpotlightNER
