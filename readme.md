@@ -14,13 +14,12 @@ simple rule based named entity recognition
       - [Date Time](#date-time)
       - [Units](#units)
       - [Keywords](#keywords)
+      - [Numbers](#numbers)
     + [Remote annotators](#remote-annotators)
       - [Spotlight](#spotlight)
-      - [AllenNLP](#allennlp)
     + [NER wrappers](#ner-wrappers)
       - [Snips](#snips)
       - [NLTK](#nltk)
-      - [Cogcomp](#cogcomp)
   
   
 ## Install
@@ -64,7 +63,7 @@ for ent in ner.extract_entities("my name is jarbas"):
 regex can also be used
 
 ```python
-from simple_NER.rules.regex import RegexNER
+from simple_NER.rules.rx import RegexNER
 
 ner = RegexNER()
 text = "i went to japan in 12/10/1996"
@@ -125,7 +124,7 @@ for ent in ner.extract_entities("name is kevin"):
 Emails can be annotated using regex rules
 
 ```python
-from simple_NER.annotators.mail import EmailNER
+from simple_NER.annotators.email_ner import EmailNER
 
 ner = EmailNER()
 text = "my email is jarbasai@mailfence.com"
@@ -146,7 +145,7 @@ for ent in ner.extract_entities(text):
 Extracting Proper Nouns with regex
 
 ```python
-from simple_NER.annotators.names import NamesNER
+from simple_NER.annotators.names_ner import NamesNER
 
 ner = NamesNER()
 text = "I am JarbasAI , but my real name is Casimiro"
@@ -164,7 +163,7 @@ for e in ner.extract_entities(text):
 Countries, Capital Cities and Cities can be looked up from a wordlist
 
 ```python
-from simple_NER.annotators.locations import LocationNER, CitiesNER
+from simple_NER.annotators.locations_ner import LocationNER, CitiesNER
 
 
 ner = LocationNER()
@@ -239,7 +238,7 @@ for r in ner.extract_entities(text):
 dates and durations can be annotated using [lingua_franca](https://github.com/MycroftAI/lingua-franca)
 
 ```python
-from simple_NER.annotators.date import DateTimeNER
+from simple_NER.annotators.datetime_ner import DateTimeNER
 
 ner = DateTimeNER()
 
@@ -277,7 +276,7 @@ Using [Quantulum3](https://github.com/nielstron/quantulum3) for information extr
 
     
 ```python
-from simple_NER.annotators.units import UnitsNER
+from simple_NER.annotators.units_ner import UnitsNER
 
 ner = UnitsNER()
 for r in ner.extract_entities("The LHC smashes proton beams at 12.8–13.0 TeV"):
@@ -342,6 +341,76 @@ assert sorted(keywords) == [('free', 1.0),
 
 ```
 
+#### Numbers
+
+Detection of written numbers
+
+```python
+from simple_NER.annotators.numbers_ner import NumberNER
+
+ner = NumberNER()
+for r in ner.extract_entities("three hundred trillion tons of spinning metal"):
+    """
+    {'confidence': 1,
+     'data': {'number': '300000000000000.0'},
+     'entity_type': 'written_number',
+     'rules': [],
+     'source_text': 'three hundred trillion tons of spinning metal',
+     'spans': [(0, 22)],
+     'value': 'three hundred trillion'}
+    """
+
+ner = NumberNER(short_scale=False)
+for r in ner.extract_entities("three hundred trillion tons of spinning metal"):
+    """
+   {'confidence': 1,
+     'data': {'number': '3e+20'},
+     'entity_type': 'written_number',
+     'rules': [],
+     'source_text': 'three hundred trillion tons of spinning metal',
+     'spans': [(0, 22)],
+     'value': 'three hundred trillion'}
+    """
+
+ner = NumberNER()
+for r in ner.extract_entities("the 5th number of the third thing"):
+    """
+   {'confidence': 1,
+     'data': {'number': '5'},
+     'entity_type': 'written_number',
+     'rules': [],
+     'source_text': 'the 5th number of the third thing',
+     'spans': [(4, 7)],
+     'value': '5th'}
+    {'confidence': 1,
+     'data': {'number': '3'},
+     'entity_type': 'written_number',
+     'rules': [],
+     'source_text': 'the 5th number of the third thing',
+     'spans': [(22, 27)],
+     'value': 'third'}
+    """
+
+ner = NumberNER(ordinals=False)
+for r in ner.extract_entities("the 5th number of the third thing"):
+    """
+   {'confidence': 1,
+     'data': {'number': '5'},
+     'entity_type': 'written_number',
+     'rules': [],
+     'source_text': 'the 5th number of the third thing',
+     'spans': [(4, 7)],
+     'value': '5th'}
+    {'confidence': 1,
+     'data': {'number': '0.3333333333333333'},
+     'entity_type': 'written_number',
+     'rules': [],
+     'source_text': 'the 5th number of the third thing',
+     'spans': [(22, 27)],
+     'value': 'third'}
+    """
+```
+
 ### Remote annotators
 
 Some web based annotators are also provided
@@ -350,7 +419,6 @@ Some web based annotators are also provided
 
 Using [pyspotlight](https://github.com/ubergrape/pyspotlight) we can annotate entities from dbpedia
 
-    
 ```python
 from simple_NER.annotators.remote.dbpedia import SpotlightNER
 
@@ -358,39 +426,28 @@ from simple_NER.annotators.remote.dbpedia import SpotlightNER
 host='http://api.dbpedia-spotlight.org/en/annotate'
 
 ner = SpotlightNER(host)
-for r in ner.extract_entities("elon musk works in spaceX"):
+for r in ner.extract_entities("London was founded by the Romans"):
     print(r.value, r.entity_type, r.uri)
     score = r.similarityScore
     """
-    elon musk Person http://dbpedia.org/resource/Elon_Musk
-    elon musk Agent http://dbpedia.org/resource/Elon_Musk
-    spaceX Organisation http://dbpedia.org/resource/SpaceX
-    spaceX Company http://dbpedia.org/resource/SpaceX
-    spaceX Agent http://dbpedia.org/resource/SpaceX
+    London Wikidata:Q515 http://dbpedia.org/resource/London
+    London Wikidata:Q486972 http://dbpedia.org/resource/London
+    London Schema:Place http://dbpedia.org/resource/London
+    London Schema:City http://dbpedia.org/resource/London
+    London DBpedia:Settlement http://dbpedia.org/resource/London
+    London DBpedia:PopulatedPlace http://dbpedia.org/resource/London
+    London DBpedia:Place http://dbpedia.org/resource/London
+    London DBpedia:Location http://dbpedia.org/resource/London
+    London DBpedia:City http://dbpedia.org/resource/London
+    Romans Wikidata:Q6256 http://dbpedia.org/resource/Ancient_Rome
+    Romans Schema:Place http://dbpedia.org/resource/Ancient_Rome
+    Romans Schema:Country http://dbpedia.org/resource/Ancient_Rome
+    Romans DBpedia:PopulatedPlace http://dbpedia.org/resource/Ancient_Rome
+    Romans DBpedia:Place http://dbpedia.org/resource/Ancient_Rome
+    Romans DBpedia:Location http://dbpedia.org/resource/Ancient_Rome
+    Romans DBpedia:Country http://dbpedia.org/resource/Ancient_Rome
     """
 ```
-
-#### AllenNLP
-
-using the [AllenNLP demo](https://github.com/allenai/allennlp-demo)
-
-```python
-from simple_NER.annotators.remote.allenai import AllenNlpNER
-
-# you can also self host
-host = "http://demo.allennlp.org/predict/"
-
-ner = AllenNlpNER(host)
-ents = [r for r in ner.extract_entities("Lisbon is the capital of Portugal")]
-assert ents[0].as_json() == {'confidence': 1,
-                             'data': {},
-                             'entity_type': 'U-LOC',
-                             'rules': [],
-                             'source_text': 'Lisbon is the capital of Portugal',
-                             'spans': [(0, 6)],
-                             'value': 'Lisbon'}
-```
-
 ### NER wrappers
 
 wrappers are also provided for performing NER with external libs
@@ -400,7 +457,7 @@ wrappers are also provided for performing NER with external libs
 If you have snips_nlu installed you can extract the [builtin entities](https://snips-nlu.readthedocs.io/en/latest/builtin_entities.html)
 
 ```python
-from simple_NER.annotators.snips import SnipsNER
+from simple_NER.annotators.snips_ner import SnipsNER
 
 ner = SnipsNER()
 
