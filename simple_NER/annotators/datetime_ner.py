@@ -17,29 +17,6 @@ class DateTimeNER(NERWrapper):
         super().__init__()
         self.anchor_date = anchor_date or datetime.now()
         self.add_detector(self.annotate_datetime)
-        self.add_detector(self.annotate_duration)
-
-    def annotate_duration(self, text):
-        # TODO don't convert to numbers... value mismatch with original string
-        # spans will fail
-        conv = _convert_words_to_numbers_en(text)
-        if conv != text:
-            LOG.debug("WARNING - text was normalized to: {t}".format(t=conv))
-        delta, remainder = extract_duration(text)
-        if delta:
-            d = TextDiff(conv, remainder)
-            for tag, span1, span2 in d.dif_tags():
-                value = " ".join(conv.split()[span1[0]:span1[1]])
-                # HACK for multiple durations
-                delta, _ = extract_duration(value)
-                data = {
-                    "days": delta.days,
-                    "seconds": delta.seconds,
-                    "microseconds": delta.microseconds,
-                    "total_seconds": delta.total_seconds(),
-                    "spoken": nice_duration(delta).strip()
-                }
-                yield Entity(value, "duration", source_text=conv, data=data)
 
     def annotate_datetime(self, text):
         # TODO don't convert to numbers... value mismatch with original string
@@ -72,52 +49,37 @@ class DateTimeNER(NERWrapper):
                                  data=data)
 
 
+class TimedeltaNER(NERWrapper):
+    def __init__(self, anchor_date=None):
+        super().__init__()
+        self.anchor_date = anchor_date or datetime.now()
+        self.add_detector(self.annotate_duration)
+
+    def annotate_duration(self, text):
+        # TODO don't convert to numbers... value mismatch with original string
+        # spans will fail
+        conv = _convert_words_to_numbers_en(text)
+        if conv != text:
+            LOG.debug("WARNING - text was normalized to: {t}".format(t=conv))
+        delta, remainder = extract_duration(text)
+        if delta:
+            d = TextDiff(conv, remainder)
+            for tag, span1, span2 in d.dif_tags():
+                value = " ".join(conv.split()[span1[0]:span1[1]])
+                # HACK for multiple durations
+                delta, _ = extract_duration(value)
+                data = {
+                    "days": delta.days,
+                    "seconds": delta.seconds,
+                    "microseconds": delta.microseconds,
+                    "total_seconds": delta.total_seconds(),
+                    "spoken": nice_duration(delta).strip()
+                }
+                yield Entity(value, "duration", source_text=conv, data=data)
+
+
 if __name__ == "__main__":
     from pprint import pprint
-
-    ner = DateTimeNER()
-    for r in ner.extract_entities(
-            "5 minutes ago was X 10 minutes from now is Y in 19 hours will "
-            "be N"):
-        pprint(r.as_json())
-        """
-        {'confidence': 1,
-         'data': {'days': 0,
-                  'microseconds': 0,
-                  'seconds': 300,
-                  'spoken': 'five minutes',
-                  'total_seconds': 300.0},
-         'entity_type': 'duration',
-         'rules': [],
-         'source_text': '5 minutes ago was x 10 minutes from now is y in 19 hours will '
-                        'be n',
-         'spans': [(0, 9)],
-         'value': '5 minutes'}
-        {'confidence': 1,
-         'data': {'days': 0,
-                  'microseconds': 0,
-                  'seconds': 600,
-                  'spoken': 'ten minutes',
-                  'total_seconds': 600.0},
-         'entity_type': 'duration',
-         'rules': [],
-         'source_text': '5 minutes ago was x 10 minutes from now is y in 19 hours will '
-                        'be n',
-         'spans': [(20, 30)],
-         'value': '10 minutes'}
-        {'confidence': 1,
-         'data': {'days': 0,
-                  'microseconds': 0,
-                  'seconds': 68400,
-                  'spoken': 'nineteen hours',
-                  'total_seconds': 68400.0},
-         'entity_type': 'duration',
-         'rules': [],
-         'source_text': '5 minutes ago was x 10 minutes from now is y in 19 hours will '
-                        'be n',
-         'spans': [(48, 56)],
-         'value': '19 hours'}
-        """
 
     ner = DateTimeNER()
     for r in ner.extract_entities(
@@ -171,40 +133,6 @@ if __name__ == "__main__":
          'value': 'in 10 days'}
         """
 
-    ner = DateTimeNER()
-    for r in ner.extract_entities("What President served for five years six months 2 days"):
-        pprint(r.as_json())
-    """
-    {'confidence': 1,
-     'data': {'day': 6,
-              'hour': 0,
-              'isoformat': '2019-04-06T00:00:00+01:00',
-              'minute': 0,
-              'month': 4,
-              'timestamp': 1554505200.0,
-              'weekday': 6,
-              'year': 2019},
-     'entity_type': 'relative_date',
-     'rules': [],
-     'source_text': 'What President served for five years , six months and 2 days '
-                    '?',
-     'spans': [(54, 60)],
-     'value': '2 days'}
-     
-    {'confidence': 1,
-     'data': {'days': 2007,
-              'microseconds': 0,
-              'seconds': 0,
-              'spoken': 'two thousand, seven days ',
-              'total_seconds': 173404800.0},
-     'entity_type': 'duration',
-     'rules': [],
-     'source_text': 'What President served for five years , six months and 2 days '
-                    '?',
-     'spans': [(26, 60)],
-     'value': 'five years , six months and 2 days'}
-    """
-
     for r in ner.extract_entities("my birthday is on december 5th"):
         pprint(r.as_json())
 
@@ -219,6 +147,68 @@ if __name__ == "__main__":
      'spans': [(14, 30)],
      'value': ' on december 5th'}
     """
+
+    ner = TimedeltaNER()
+    for r in ner.extract_entities(
+            "5 minutes ago was X 10 minutes from now is Y in 19 hours will "
+            "be N"):
+        pprint(r.as_json())
+        """
+        {'confidence': 1,
+         'data': {'days': 0,
+                  'microseconds': 0,
+                  'seconds': 300,
+                  'spoken': 'five minutes',
+                  'total_seconds': 300.0},
+         'entity_type': 'duration',
+         'rules': [],
+         'source_text': '5 minutes ago was x 10 minutes from now is y in 19 hours will '
+                        'be n',
+         'spans': [(0, 9)],
+         'value': '5 minutes'}
+        {'confidence': 1,
+         'data': {'days': 0,
+                  'microseconds': 0,
+                  'seconds': 600,
+                  'spoken': 'ten minutes',
+                  'total_seconds': 600.0},
+         'entity_type': 'duration',
+         'rules': [],
+         'source_text': '5 minutes ago was x 10 minutes from now is y in 19 hours will '
+                        'be n',
+         'spans': [(20, 30)],
+         'value': '10 minutes'}
+        {'confidence': 1,
+         'data': {'days': 0,
+                  'microseconds': 0,
+                  'seconds': 68400,
+                  'spoken': 'nineteen hours',
+                  'total_seconds': 68400.0},
+         'entity_type': 'duration',
+         'rules': [],
+         'source_text': '5 minutes ago was x 10 minutes from now is y in 19 hours will '
+                        'be n',
+         'spans': [(48, 56)],
+         'value': '19 hours'}
+        """
+
+    for r in ner.extract_entities("What President served for five years six months 2 days"):
+        pprint(r.as_json())
+    """
+    {'confidence': 1,
+     'data': {'days': 2007,
+              'microseconds': 0,
+              'seconds': 0,
+              'spoken': 'two thousand, seven days ',
+              'total_seconds': 173404800.0},
+     'entity_type': 'duration',
+     'rules': [],
+     'source_text': 'What President served for five years , six months and 2 days '
+                    '?',
+     'spans': [(26, 60)],
+     'value': 'five years , six months and 2 days'}
+    """
+
     for r in ner.extract_entities("starts in 5 minutes"):
         pprint(r.as_json())
     """

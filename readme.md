@@ -11,7 +11,8 @@ simple rule based named entity recognition
       - [Email](#email)
       - [Names](#names)
       - [Locations](#locations)
-      - [Date Time](#date-time)
+      - [Datetime](#date-time)
+      - [Timedelta](#durations)
       - [Units](#units)
       - [Keywords](#keywords)
       - [Numbers](#numbers)
@@ -26,15 +27,10 @@ simple rule based named entity recognition
 
 Available on pip
 
-    pip install simple_NER
-    
-from source
+```bash
+pip install simple_NER
+```
 
-    git clone https://github.com/JarbasAl/simple_NER
-    cd simple_NER
-    pip install -r requirements.txt
-    pip install .
-    
 ## Usage
 
 ### Rule Based NER
@@ -121,7 +117,7 @@ for ent in ner.extract_entities("name is kevin"):
 
 #### Email
 
-Emails can be annotated using regex rules
+Extracting emails using regex rules
 
 ```python
 from simple_NER.annotators.email_ner import EmailNER
@@ -232,41 +228,80 @@ for r in ner.extract_entities(text):
     """
 ```
 
-
 #### Date Time
 
-dates and durations can be annotated using [lingua_franca](https://github.com/MycroftAI/lingua-franca)
+Datetime extraction is powered by [lingua_franca](https://github.com/MycroftAI/lingua-franca)
 
 ```python
 from simple_NER.annotators.datetime_ner import DateTimeNER
 
 ner = DateTimeNER()
 
-for r in ner.extract_entities("The movie is one hour, fifty seven and a half minutes long"):
-    assert r.value == 'one hour, fifty seven and a half minutes'
-    assert r.entity_type == "duration"
-    assert r.total_seconds == 7050
-    assert r.spoken == 'one hour fifty seven minutes thirty seconds'   
-
 for r in ner.extract_entities("my birthday is on december 5th"):
-    assert r.value == 'december 5'
     assert r.entity_type == "relative_date"
     print("day:", r.day, "month:", r.month, "year:", r.year)
     """
-    december 5th
     day: 5 month: 12 year: 2019
     """
 
 for r in ner.extract_entities("entries are due by January 4th, 2017 at 8:30pm"):
-    print(r.value)
     assert r.entity_type == "relative_date"
     print("day:", r.day,"month:", r.month, "year:", r.year, "hour:", r.hour,
           "minute:", r.minute)
     """
-    January 4th, 2017 at 8:30pm
     day: 4 month: 1 year: 2017 hour: 20 minute: 30
-
     """
+
+for r in ner.extract_entities(
+        "tomorrow is X yesterday was Y in 10 days it will be Z"):
+    assert r.entity_type == "relative_date"
+    print(r.value,
+          "day:", r.day, "month:", r.month, "year:", r.year,
+          "hour:", r.hour, "minute:", r.minute)
+    """
+    tomorrow day: 30 month: 11 year: 2020 hour: 0 minute: 0
+    yesterday day: 28 month: 11 year: 2020 hour: 0 minute: 0
+    in 10 days day: 9 month: 12 year: 2020 hour: 0 minute: 0
+    """
+```
+
+#### Durations
+
+durations/timedeltas extraction is powered by [lingua_franca](https://github.com/MycroftAI/lingua-franca)
+
+```python
+from simple_NER.annotators.datetime_ner import TimedeltaNER
+
+ner = TimedeltaNER()
+
+for r in ner.extract_entities(
+        "5 minutes ago was X 10 minutes from now is Y in 19 hours will "
+        "be N"):
+    assert r.entity_type == "duration"
+    print(r.value, r.total_seconds)
+    """
+    5 minutes 300.0
+    10 minutes 600.0
+    19 hours 68400.0
+    """
+
+for r in ner.extract_entities(
+        "What President served for five years six months 2 days"):
+    # NOTE months/years are not supported because they are not explicit
+    # how many days is 1 month? how many days is 1 year?
+    assert r.entity_type == "duration"
+    print(r.value, r.total_seconds)
+    """2 days 172800.0"""
+
+for r in ner.extract_entities("starts in 5 minutes"):
+    assert r.entity_type == "duration"
+    print(r.value, r.total_seconds)
+    """5 minutes 300.0"""
+
+for r in ner.extract_entities("starts in five minutes"):
+    assert r.entity_type == "duration"
+    print(r.value, r.total_seconds)
+    """5 minutes 300.0"""
 
 ```
 
@@ -343,7 +378,7 @@ assert sorted(keywords) == [('free', 1.0),
 
 #### Numbers
 
-Detection of written numbers
+Extraction of written numbers is powered by [lingua_franca](https://github.com/MycroftAI/lingua-franca)
 
 ```python
 from simple_NER.annotators.numbers_ner import NumberNER
@@ -448,6 +483,7 @@ for r in ner.extract_entities("London was founded by the Romans"):
     Romans DBpedia:Country http://dbpedia.org/resource/Ancient_Rome
     """
 ```
+
 ### NER wrappers
 
 wrappers are also provided for performing NER with external libs
