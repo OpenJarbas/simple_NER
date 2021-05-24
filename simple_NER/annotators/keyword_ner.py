@@ -10,10 +10,14 @@ class KeywordNER(NERWrapper):
         self.rake = Rake()
 
     def annotate(self, text):
-        for x in self.rake.run(text):
+        results = self.rake.run(text)
+        total = sum(x[1] for x in results)
+        for x in results:
+            confidence = x[1] / total
             data = {"score": x[1]}
             yield Entity(x[0],
                          "keyword",
+                         confidence=confidence,
                          source_text=text,
                          data=data)
 
