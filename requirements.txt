@@ -5,3 +5,4 @@ numpy
 lingua_nostra>=0.4.2
 simplematch
 quebra_frases
+RAKEkeywords>=0.2.0

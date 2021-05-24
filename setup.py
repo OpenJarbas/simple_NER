@@ -24,7 +24,7 @@ setup(
     license='MIT',
     author='jarbasAI',
     install_requires=["simplematch", "nltk", "quantulum3", "requests",
-                      "lingua_nostra>=0.4.2"],
+                      "lingua_nostra>=0.4.2", "RAKEkeywords>=0.2.0"],
     author_email='jarbasai@mailfence.com',
     description='rule based NER'
 )
