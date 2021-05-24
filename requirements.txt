@@ -1,8 +1,7 @@
-padaos
 requests
 quantulum3
-fann2==1.0.7
-padatious>=0.4.5
 nltk
 numpy
-lingua_franca>=0.3.0
+lingua_nostra>=0.4.2
+simplematch
+quebra_frases

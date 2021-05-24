@@ -9,12 +9,13 @@ try:
 except ImportError:
     LOG.error("padatious not found, run")
     LOG.error("pip install fann2==1.0.7")
-    LOG.error("pip install padatious==0.4.5")
+    LOG.error("pip install padatious>=0.4.5")
     raise
 
 
 class NeuralNER(RuleNER):
     def __init__(self):
+        # TODO XDG
         cache = expanduser("~/.simple_NER")
         if not isdir(cache):
             makedirs(cache)

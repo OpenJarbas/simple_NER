@@ -14,7 +14,7 @@ extra_files = package_files('simple_NER')
 
 setup(
     name='simple_NER',
-    version='0.7.0',
+    version='0.8.0',
     packages=['simple_NER', 'simple_NER.rules', 'simple_NER.annotators',
               'simple_NER.annotators.remote', 'simple_NER.utils',
               'simple_NER.keywords'],
@@ -23,8 +23,8 @@ setup(
     include_package_data=True,
     license='MIT',
     author='jarbasAI',
-    install_requires=["padaos", "fann2==1.0.7", "padatious", "nltk",
-                      "quantulum3", "requests", "lingua_franca>=0.3.0"],
+    install_requires=["simplematch", "nltk", "quantulum3", "requests",
+                      "lingua_nostra>=0.4.2"],
     author_email='jarbasai@mailfence.com',
     description='rule based NER'
 )

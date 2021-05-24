@@ -1,5 +1,6 @@
 import re
 import types
+from quebra_frases import span_indexed_word_tokenize
 
 
 def find_all(a_str, sub):
@@ -16,14 +17,12 @@ class Entity:
     _name = "entity"
 
     def __init__(self, value, entity_type=None, source_text="", rules=None,
-                 confidence=1, data=None):
+                 confidence=1, data=None, ignore_case=True):
         if entity_type:
             self._name = entity_type
-        self._index = source_text.lower().find(value.lower())
         self._value = value
         self._source_text = source_text
-        self._all_indexes = [i for i in find_all(source_text.lower(),
-                                                 value.lower())]
+        self.ignore_case = ignore_case
         if rules and not isinstance(rules, list) and not isinstance(rules,
                                                                     tuple):
             rules = [rules]
@@ -44,12 +43,22 @@ class Entity:
                 setattr(self, k, self.data[k])
 
     @property
+    def spans(self):
+        spans = []
+        for start, end, tok in span_indexed_word_tokenize(self.source_text):
+            if self.ignore_case and tok.lower() == self.value.lower():
+                spans.append((start, end))
+            elif tok == self.value:
+                spans.append((start, end))
+        return spans
+
+    @property
     def indexes(self):
-        return self._all_indexes
+        return [i[0] for i in self.spans]
 
     @property
     def occurrence_number(self):
-        return len(self._all_indexes)
+        return len(self.spans)
 
     @property
     def confidence(self):
@@ -70,10 +79,6 @@ class Entity:
     @property
     def source_text(self):
         return self._source_text
-
-    @property
-    def spans(self):
-        return [(i, i + len(self.value)) for i in self.indexes]
 
     def as_json(self):
         return {"entity_type": self.entity_type, "spans": self.spans,
