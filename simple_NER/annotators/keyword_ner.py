@@ -1,16 +1,17 @@
 from simple_NER.annotators import NERWrapper
 from simple_NER import Entity
-from simple_NER.keywords.rake import Rake
+from RAKEkeywords import Rake
 
 
 class KeywordNER(NERWrapper):
-    def __init__(self):
+    def __init__(self, lang="en"):
         super().__init__()
         self.add_detector(self.annotate)
-        self.rake = Rake()
+        self.lang = lang
+        self.rake = Rake(lang=self.lang)
 
     def annotate(self, text):
-        results = self.rake.run(text)
+        results = self.rake.extract_keywords(text)
         total = sum(x[1] for x in results)
         for x in results:
             confidence = x[1] / total

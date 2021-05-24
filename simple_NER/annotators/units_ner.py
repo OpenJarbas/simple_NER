@@ -10,13 +10,13 @@ except ImportError:
 
 
 class UnitsNER(NERWrapper):
-    def __init__(self):
+    def __init__(self, lang="en"):
         super().__init__()
+        self.lang = lang.split("-")[0].lower()
         self.add_detector(self.annotate)
 
     def annotate(self, text):
-
-        for e in parser.parse(text):
+        for e in parser.parse(text, lang=self.lang):
             spoken = e.to_spoken()
             data = e.__dict__
             data["unit"] = e.unit.__dict__
