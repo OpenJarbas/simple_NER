@@ -1,5 +1,6 @@
-from padaos import IntentContainer
+import simplematch as sm
 from simple_NER import Entity, SimpleNER
+from quebra_frases.list_utils import flatten
 
 
 class Rule:
@@ -24,7 +25,6 @@ class Rule:
 
 class RuleNER(SimpleNER):
     def __init__(self):
-        self._container = IntentContainer()
         self._rules = {}
         self._examples = {}
 
@@ -39,35 +39,38 @@ class RuleNER(SimpleNER):
     def add_rule(self, name, rules):
         if isinstance(rules, str):
             rules = [rules]
-        self._container.add_intent(name, rules)
         if name not in self._rules:
             self._rules[name] = []
 
-        # NOTE, there is a bug, entities need to be lower case
-        # n.add_rule("name", "my name is {Person}") <- won't work
         rules = [r.lower() for r in rules]
         self._rules[name].append(Rule(name, rules))
 
     def add_entity_examples(self, name, examples):
         if isinstance(examples, str):
             examples = [examples]
-        self._container.add_entity(name, examples)
         if name not in self._examples:
             self._examples[name] = []
         for e in examples:
             self._examples[name].append(Entity(e, name))
 
     def extract_entities(self, text, as_json=False):
-        for rule in self._container.calc_intents(text):
-            for e in rule["entities"]:
-                if as_json:
-                    yield Entity(rule["entities"][e], entity_type=e,
-                                 source_text=text,
-                                 rules=self._rules[rule["name"]]).as_json()
-                else:
-                    yield Entity(rule["entities"][e], entity_type=e,
-                                 source_text=text,
-                                 rules=self._rules[rule["name"]])
+        for name, rules in self._rules.items():
+            regexes = flatten([r.rules for r in rules])
+
+            for r in regexes:
+                entities = sm.match(r, text, case_sensitive=True)
+                if entities is None:
+                    entities = sm.match(r, text, case_sensitive=False)
+
+                if entities is not None:
+                    for k, v in entities.items():
+                        ent = Entity(v, entity_type=k,
+                                     source_text=text,
+                                     rules=r)
+                        if as_json:
+                            yield ent.as_json()
+                        else:
+                            yield ent
 
 
 if __name__ == "__main__":
