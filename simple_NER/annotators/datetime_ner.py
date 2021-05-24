@@ -2,10 +2,10 @@ from simple_NER.annotators import NERWrapper
 from simple_NER import Entity
 
 from datetime import datetime
-from lingua_franca.parse import extract_datetime, extract_duration
-from lingua_franca.lang.parse_en import _convert_words_to_numbers_en
-from lingua_franca.format import nice_duration, nice_date
-from lingua_franca import load_language
+from lingua_nostra.parse import extract_datetime, extract_duration
+from lingua_nostra.lang.parse_en import _convert_words_to_numbers_en
+from lingua_nostra.format import nice_duration, nice_date
+from lingua_nostra import load_language
 from simple_NER.utils.diff import TextDiff
 from simple_NER.utils.log import LOG
 
