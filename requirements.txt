@@ -4,5 +4,5 @@ nltk
 numpy
 lingua_nostra>=0.4.2
 simplematch
-quebra_frases
+quebra_frases>=0.3.7
 RAKEkeywords>=0.2.0

@@ -1,6 +1,6 @@
 import re
 import types
-from quebra_frases import span_indexed_word_tokenize
+from quebra_frases import find_spans
 
 
 def find_all(a_str, sub):
@@ -23,8 +23,8 @@ class Entity:
         self._value = value
         self._source_text = source_text
         self.ignore_case = ignore_case
-        if rules and not isinstance(rules, list) and not isinstance(rules,
-                                                                    tuple):
+        if rules and not isinstance(rules, list) and \
+                not isinstance(rules, tuple):
             rules = [rules]
         self._rules = rules or []
         self._confidence = confidence
@@ -44,13 +44,11 @@ class Entity:
 
     @property
     def spans(self):
-        spans = []
-        for start, end, tok in span_indexed_word_tokenize(self.source_text):
-            if self.ignore_case and tok.lower() == self.value.lower():
-                spans.append((start, end))
-            elif tok == self.value:
-                spans.append((start, end))
-        return spans
+        if self.ignore_case:
+            spans = find_spans(self.source_text.lower(), [self.value.lower()])
+        else:
+            spans = find_spans(self.source_text, [self.value])
+        return [(s[0], s[1]) for s in spans]
 
     @property
     def indexes(self):
