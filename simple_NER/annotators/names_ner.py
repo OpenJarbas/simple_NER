@@ -14,11 +14,15 @@ class NamesNER(NERWrapper):
 
     def annotate(self, text):
         for word in re.findall(self.regex_string,  text):
+            if word[0].isupper():
+                conf = 0.8
+            else:
+                conf = 0.65
             yield Entity(word,
                          "Noun",
                          rules=[self.rule],
                          source_text=text,
-                         confidence=0.8)
+                         confidence=conf)
 
 
 if __name__ == "__main__":
